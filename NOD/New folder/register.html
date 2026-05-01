@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Left Panel - Branding */
+        .left-panel {
+            width: 42%;
+            background: linear-gradient(135deg, #e8ff00 0%, #8cff00 50%, #48ca38 100%);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo {
+            margin-bottom: 60px;
+        }
+
+        .logo img {
+            height: 70px;
+            width: auto;
+        }
+
+        .tagline {
+            font-size: 32px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.3;
+            margin-bottom: 50px;
+        }
+
+        .feature {
+            margin-bottom: 35px;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .feature-icon.orange { background: #f97316; }
+        .feature-icon.pink { background: #ec4899; }
+        .feature-icon.purple { background: #8b5cf6; }
+
+        .feature-title {
+            color: #fbbf24;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Decorative elements */
+        .decoration-target {
+            position: absolute;
+            top: 80px;
+            left: -30px;
+            width: 120px;
+            height: 120px;
+            border: 3px solid rgba(99, 102, 241, 0.5);
+            border-radius: 50%;
+        }
+
+        .decoration-target::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(99, 102, 241, 0.5);
+            border-radius: 50%;
+        }
+
+        .decoration-target::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(99, 102, 241, 0.5);
+            border-radius: 50%;
+        }
+
+        .illustration {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            font-size: 120px;
+        }
+
+        /* Right Panel - Form */
+        .right-panel {
+            flex: 1;
+            background: #fff;
+            padding: 40px 80px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 60px;
+        }
+
+        .top-nav span {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .top-nav a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .top-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .role-option {
+            flex: 1;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .role-option:hover {
+            border-color: #a5b4fc;
+            background: #f5f3ff;
+        }
+
+        .role-option.selected {
+            border-color: #6366f1;
+            background: #eef2ff;
+        }
+
+        .role-option input {
+            display: none;
+        }
+
+        .role-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .role-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 15px;
+        }
+
+        .role-desc {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* Social Buttons */
+        .social-btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+
+        .social-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .social-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        /* Form Fields */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 48px;
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #9ca3af;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .toggle-password-btn svg {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
+        .toggle-password-btn:hover {
+            color: #4b5563;
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn .arrow {
+            font-size: 18px;
+        }
+
+        /* Bottom CTA */
+        .bottom-cta {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bottom-cta-icon {
+            width: 45px;
+            height: 45px;
+            background: #eef2ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .bottom-cta-text {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .bottom-cta-text a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .bottom-cta-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Error/Success Messages */
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            display: block;
+        }
+
+        .message.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            display: block;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .left-panel {
+                display: none;
+            }
+            
+            .right-panel {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+            .right-panel {
+                padding: 25px 20px;
+            }
+            
+            .top-nav {
+                margin-bottom: 40px;
+            }
+            
+            h1 {
+                font-size: 26px;
+                margin-bottom: 25px;
+            }
+            
+            .form-container {
+                max-width: 100%;
+            }
+            
+            .role-selection {
+                gap: 10px;
+            }
+            
+            .role-option {
+                padding: 14px 10px;
+            }
+            
+            .role-icon {
+                font-size: 28px;
+            }
+            
+            .role-label {
+                font-size: 14px;
+            }
+            
+            .role-desc {
+                font-size: 11px;
+            }
+            
+            .bottom-cta {
+                padding: 15px;
+                margin-top: 25px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            body {
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+            }
+            
+            .right-panel {
+                padding: 20px 16px;
+                justify-content: flex-start;
+            }
+            
+            .top-nav {
+                margin-bottom: 25px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+            }
+            
+            .top-nav span,
+            .top-nav a {
+                font-size: 13px;
+            }
+            
+            h1 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            
+            .role-selection {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .role-option {
+                padding: 14px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-align: left;
+            }
+            
+            .role-icon {
+                font-size: 32px;
+                margin-bottom: 0;
+            }
+            
+            .role-info {
+                flex: 1;
+            }
+            
+            .social-btn {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            
+            .divider {
+                margin: 18px 0;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+            }
+            
+            .form-group input {
+                padding: 11px 14px;
+                font-size: 14px;
+            }
+            
+            .submit-btn {
+                padding: 12px 18px;
+                font-size: 15px;
+            }
+            
+            .bottom-cta {
+                margin-top: 20px;
+                padding: 15px;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .bottom-cta-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            
+            .bottom-cta-text {
+                font-size: 13px;
+            }
+        }
+
+        /* Very small phones */
+        @media (max-width: 360px) {
+            .right-panel {
+                padding: 15px 12px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .role-option {
+                padding: 12px;
+            }
+            
+            .role-icon {
+                font-size: 26px;
+            }
+            
+            .role-label {
+                font-size: 13px;
+            }
+            
+            .social-btn {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+            
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .submit-btn {
+                padding: 11px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Panel -->
+    <div class="left-panel">
+        <div class="decoration-target"></div>
+        
+        <div class="logo"><img src="Untitled 1.png" alt="NOD Logo"></div>
+        
+        <div class="tagline">
+            Get started with<br>
+            interactive learning
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon orange">🎯</div>
+            <div class="feature-title">Gamified Learning</div>
+            <div class="feature-desc">
+                Engage students with card-based battles and competitive quizzes.
+            </div>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon pink">📊</div>
+            <div class="feature-title">Track Progress</div>
+            <div class="feature-desc">
+                Monitor student performance with real-time analytics and leaderboards.
+            </div>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon purple">🏆</div>
+            <div class="feature-title">Compete & Learn</div>
+            <div class="feature-desc">
+                Students earn cards by answering correctly and battle to win more.
+            </div>
+        </div>
+        
+        <div class="illustration">🚀</div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+        <div class="top-nav">
+            <span>Already have an account?</span>
+            <a href="login.html">Sign in</a>
+        </div>
+        
+        <div class="form-container">
+            <h1>Create your free account</h1>
+            
+            <div id="message" class="message"></div>
+            
+            <!-- Role Selection -->
+            <div class="role-selection">
+                <label class="role-option selected" onclick="selectRole('student')">
+                    <input type="radio" name="role" value="student" checked>
+                    <div class="role-icon">🎓</div>
+                    <div class="role-label">Student</div>
+                    <div class="role-desc">Join games & compete</div>
+                </label>
+                <label class="role-option" onclick="selectRole('teacher')">
+                    <input type="radio" name="role" value="teacher">
+                    <div class="role-icon">👨‍🏫</div>
+                    <div class="role-label">Teacher</div>
+                    <div class="role-desc">Create & manage games</div>
+                </label>
+            </div>
+            
+            <!-- Google Sign Up -->
+            <button class="social-btn" id="googleBtn" onclick="signUpWithGoogle()">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign up with Google
+            </button>
+            
+            <div class="divider">
+                <span>or</span>
+            </div>
+            
+            <!-- Email Form -->
+            <form id="registerForm" onsubmit="signUpWithEmail(event)">
+                <div class="form-group">
+                    <label for="displayName">Full Name</label>
+                    <input type="text" id="displayName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="password" placeholder="Create a password (min 6 chars)" minlength="6" required>
+                        <button type="button" class="toggle-password-btn" id="register-password-toggle" aria-label="Show password" title="Show password"></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="confirmPassword" placeholder="Re-enter your password" minlength="6" required>
+                        <button type="button" class="toggle-password-btn" id="register-confirm-password-toggle" aria-label="Show password" title="Show password"></button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span id="btnText">Sign up with Email</span>
+                    <span class="arrow">→</span>
+                </button>
+            </form>
+            
+            <div class="bottom-cta">
+                <div class="bottom-cta-icon">📚</div>
+                <div class="bottom-cta-text">
+                    Want to learn more about NOD?<br>
+                    <a href="#">Check out our features</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc,
+            deleteDoc,
+            getDocs,
+            query,
+            where,
+            collection,
+            runTransaction,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwvrwRoPNXptku6oSjqX8qV-38mWqBCqA",
+            authDomain: "capstone-project-nod-16ff9.firebaseapp.com",
+            projectId: "capstone-project-nod-16ff9",
+            storageBucket: "capstone-project-nod-16ff9.firebasestorage.app",
+            messagingSenderId: "244508008998",
+            appId: "1:244508008998:web:56abc30f10c23f5005bce7"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        // Store selected role
+        let selectedRole = 'student';
+
+        function normalizeIdentityValue(value) {
+            return (value || '').toString().trim().toLowerCase();
+        }
+
+        function isSoftDeletedProfile(userData) {
+            return !!userData && (userData.isDeleted === true || userData.status === 'deleted');
+        }
+
+        function normalizeSignupRole(role) {
+            return role === 'teacher' ? 'teacher' : 'student';
+        }
+
+        // Role selection
+        window.selectRole = function(role) {
+            const safeRole = normalizeSignupRole(role);
+            selectedRole = safeRole;
+
+            document.querySelectorAll('.role-option').forEach(opt => {
+                const input = opt.querySelector('input[name="role"]');
+                opt.classList.toggle('selected', !!input && input.value === safeRole);
+                if (input) {
+                    input.checked = input.value === safeRole;
+                }
+            });
+        };
+
+        async function isIdentifierTaken(field, rawValue, excludeUid = null) {
+            const trimmedValue = (rawValue || '').toString().trim();
+            const normalizedValue = normalizeIdentityValue(trimmedValue);
+            if (!trimmedValue || !normalizedValue) return false;
+
+            const usersRef = collection(db, "users");
+
+            // Preferred lookup using normalized identity fields (for newly saved docs)
+            const normalizedField = `${field}Lower`;
+            const byNormalized = await getDocs(query(usersRef, where(normalizedField, "==", normalizedValue)));
+            for (const docSnap of byNormalized.docs) {
+                if (excludeUid && docSnap.id === excludeUid) continue;
+                const userData = docSnap.data();
+                if (isSoftDeletedProfile(userData)) continue;
+                return true;
+            }
+
+            // Backward-compatible fallback for old docs that may not have *Lower fields
+            const byExact = await getDocs(query(usersRef, where(field, "==", trimmedValue)));
+            for (const docSnap of byExact.docs) {
+                if (excludeUid && docSnap.id === excludeUid) continue;
+                const userData = docSnap.data();
+                if (isSoftDeletedProfile(userData)) continue;
+                return true;
+            }
+
+            // Case-insensitive fallback for legacy records with different casing
+            const allUsers = await getDocs(usersRef);
+            for (const docSnap of allUsers.docs) {
+                if (excludeUid && docSnap.id === excludeUid) continue;
+                const userData = docSnap.data();
+                if (isSoftDeletedProfile(userData)) continue;
+
+                const docValue = normalizeIdentityValue(userData?.[field]);
+                if (docValue && docValue === normalizedValue) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Check if displayName is already taken
+        async function isDisplayNameTaken(displayName, excludeUid = null) {
+            return isIdentifierTaken("displayName", displayName, excludeUid);
+        }
+
+        async function isEmailTaken(email, excludeUid = null) {
+            return isIdentifierTaken("email", email, excludeUid);
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.className = 'message ' + type;
+        }
+
+        // Set loading state
+        function setLoading(loading) {
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const googleBtn = document.getElementById('googleBtn');
+            
+            if (loading) {
+                btn.disabled = true;
+                googleBtn.disabled = true;
+                btnText.innerHTML = '<div class="spinner"></div>';
+            } else {
+                btn.disabled = false;
+                googleBtn.disabled = false;
+                btnText.textContent = 'Sign up with Email';
+            }
+        }
+
+        function getPasswordToggleIcon(showingPassword) {
+            if (showingPassword) {
+                return `
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M3 3L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10.58 10.58C10.21 10.95 10 11.46 10 12C10 13.1 10.9 14 12 14C12.54 14 13.05 13.79 13.42 13.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M9.88 5.09C10.57 5.03 11.28 5 12 5C16.48 5 20.27 7.94 21.54 12C20.98 13.78 19.97 15.35 18.66 16.58" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6.2 6.22C4.57 7.48 3.3 9.32 2.46 12C3.73 16.06 7.52 19 12 19C13.68 19 15.26 18.58 16.64 17.84" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+            }
+
+            return `
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M2.46 12C3.73 7.94 7.52 5 12 5C16.48 5 20.27 7.94 21.54 12C20.27 16.06 16.48 19 12 19C7.52 19 3.73 16.06 2.46 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            `;
+        }
+
+        function setupPasswordToggle(inputId, toggleId) {
+            const input = document.getElementById(inputId);
+            const toggle = document.getElementById(toggleId);
+            if (!input || !toggle) return;
+
+            toggle.innerHTML = getPasswordToggleIcon(false);
+
+            toggle.addEventListener('click', () => {
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                toggle.innerHTML = getPasswordToggleIcon(isHidden);
+                toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+                toggle.setAttribute('title', isHidden ? 'Hide password' : 'Show password');
+            });
+        }
+
+        setupPasswordToggle('password', 'register-password-toggle');
+        setupPasswordToggle('confirmPassword', 'register-confirm-password-toggle');
+
+        // Create user document in Firestore
+        async function createUserDocument(user, displayName) {
+            const safeRole = normalizeSignupRole(selectedRole);
+            const safeDisplayName = displayName || user.displayName || 'User';
+            const safeEmail = user.email || '';
+            const userDoc = {
+                uid: user.uid,
+                email: safeEmail,
+                emailLower: normalizeIdentityValue(safeEmail),
+                displayName: safeDisplayName,
+                displayNameLower: normalizeIdentityValue(safeDisplayName),
+                role: safeRole,
+                photoURL: user.photoURL || null,
+                createdAt: serverTimestamp(),
+                // Game stats for all users
+                gamesPlayed: 0,
+                totalScore: 0,
+                wins: 0,
+                losses: 0,
+                resignations: 0
+            };
+
+            // Add some role-specific initial data
+            if (safeRole === 'teacher') {
+                userDoc.classroomsCreated = [];
+                userDoc.quizzesCreated = [];
+            } else {
+                userDoc.classroomsJoined = [];
+            }
+
+            await setDoc(doc(db, "users", user.uid), userDoc);
+            return userDoc;
+        }
+
+        async function reserveIdentityOrThrow(user, displayName) {
+            const safeEmail = (user.email || '').trim();
+            const safeDisplayName = (displayName || '').trim();
+
+            const emailLower = normalizeIdentityValue(safeEmail);
+            const displayNameLower = normalizeIdentityValue(safeDisplayName);
+
+            if (!emailLower || !displayNameLower) {
+                throw new Error('Missing identity values.');
+            }
+
+            const emailRef = doc(db, "userEmailIndex", emailLower);
+            const displayNameRef = doc(db, "userDisplayNameIndex", displayNameLower);
+
+            await runTransaction(db, async (transaction) => {
+                const emailSnap = await transaction.get(emailRef);
+                if (emailSnap.exists()) {
+                    const ownerUid = emailSnap.data()?.uid;
+                    if (ownerUid && ownerUid !== user.uid) {
+                        throw new Error('EMAIL_ALREADY_EXISTS');
+                    }
+                }
+
+                const displayNameSnap = await transaction.get(displayNameRef);
+                if (displayNameSnap.exists()) {
+                    const ownerUid = displayNameSnap.data()?.uid;
+                    if (ownerUid && ownerUid !== user.uid) {
+                        throw new Error('DISPLAYNAME_ALREADY_EXISTS');
+                    }
+                }
+
+                transaction.set(emailRef, {
+                    uid: user.uid,
+                    email: safeEmail,
+                    emailLower,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+
+                transaction.set(displayNameRef, {
+                    uid: user.uid,
+                    displayName: safeDisplayName,
+                    displayNameLower,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+            });
+        }
+
+        async function rollbackNewAuthUserIfNeeded(user) {
+            if (!user) return;
+            try {
+                await deleteDoc(doc(db, "users", user.uid));
+            } catch (_e) {}
+            try {
+                await user.delete();
+            } catch (_e) {}
+        }
+
+        // Sign up with Email
+        window.signUpWithEmail = async function(e) {
+            e.preventDefault();
+            
+            const displayName = document.getElementById('displayName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!displayName || !email || !password || !confirmPassword) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage('Password and confirm password do not match.', 'error');
+                return;
+            }
+
+            setLoading(true);
+            let createdAuthUser = null;
+
+            try {
+                // Check if displayName is already taken
+                const nameTaken = await isDisplayNameTaken(displayName);
+                if (nameTaken) {
+                    showMessage('This display name is already taken. Please choose another.', 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                const emailTaken = await isEmailTaken(email);
+                if (emailTaken) {
+                    showMessage('This email is already used by another account.', 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                // Create auth user
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                createdAuthUser = user;
+
+                // Update profile with display name
+                await updateProfile(user, { displayName: displayName });
+
+                // Reserve identity keys transactionally (race-condition safe)
+                await reserveIdentityOrThrow(user, displayName);
+
+                // Create Firestore document
+                await createUserDocument(user, displayName);
+
+                showMessage('Account created successfully! Redirecting...', 'success');
+                
+                // Redirect based on role
+                setTimeout(() => {
+                    if (normalizeSignupRole(selectedRole) === 'teacher') {
+                        window.location.href = 'teacher-dashboard.html';
+                    } else {
+                        window.location.href = 'student-dashboard.html';
+                    }
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error:', error);
+                let errorMessage = 'An error occurred. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered. Try signing in.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Please enter a valid email address.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password should be at least 6 characters.';
+                        break;
+                }
+
+                if (error?.message === 'EMAIL_ALREADY_EXISTS') {
+                    errorMessage = 'This email is already used by another account.';
+                } else if (error?.message === 'DISPLAYNAME_ALREADY_EXISTS') {
+                    errorMessage = 'This display name is already taken. Please choose another.';
+                }
+
+                if (
+                    createdAuthUser &&
+                    (error?.message === 'EMAIL_ALREADY_EXISTS' || error?.message === 'DISPLAYNAME_ALREADY_EXISTS')
+                ) {
+                    await rollbackNewAuthUserIfNeeded(createdAuthUser);
+                }
+                
+                showMessage(errorMessage, 'error');
+                setLoading(false);
+            }
+        };
+
+        // Sign up with Google
+        window.signUpWithGoogle = async function() {
+            setLoading(true);
+            let signedInGoogleUser = null;
+            let wasNewGoogleUser = false;
+
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                signedInGoogleUser = user;
+                wasNewGoogleUser = !!result?.additionalUserInfo?.isNewUser;
+                
+                // Check if displayName is already taken
+                let finalDisplayName = user.displayName;
+                const nameTaken = await isDisplayNameTaken(finalDisplayName, user.uid);
+                if (nameTaken) {
+                    // Prompt for a unique name
+                    finalDisplayName = prompt('The name "' + user.displayName + '" is already taken. Please enter a unique display name:');
+                    if (!finalDisplayName || finalDisplayName.trim() === '') {
+                        showMessage('You must enter a unique display name.', 'error');
+                        setLoading(false);
+                        return;
+                    }
+                    finalDisplayName = finalDisplayName.trim();
+                    
+                    // Check again
+                    const stillTaken = await isDisplayNameTaken(finalDisplayName, user.uid);
+                    if (stillTaken) {
+                        showMessage('That name is also taken. Please try again.', 'error');
+                        setLoading(false);
+                        return;
+                    }
+                }
+
+                if (user.email) {
+                    const emailTaken = await isEmailTaken(user.email, user.uid);
+                    if (emailTaken) {
+                        showMessage('This email is already linked to another profile.', 'error');
+                        setLoading(false);
+                        return;
+                    }
+                }
+
+                // Create Firestore document
+                await reserveIdentityOrThrow(user, finalDisplayName);
+                await createUserDocument(user, finalDisplayName);
+
+                showMessage('Account created successfully! Redirecting...', 'success');
+                
+                // Redirect based on role
+                setTimeout(() => {
+                    if (normalizeSignupRole(selectedRole) === 'teacher') {
+                        window.location.href = 'teacher-dashboard.html';
+                    } else {
+                        window.location.href = 'student-dashboard.html';
+                    }
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error:', error);
+                let errorMessage = 'Google sign-in failed. Please try again.';
+                
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Sign-in popup was closed. Please try again.';
+                } else if (error.code === 'auth/account-exists-with-different-credential') {
+                    errorMessage = 'An account already exists with this email.';
+                } else if (error?.message === 'EMAIL_ALREADY_EXISTS') {
+                    errorMessage = 'This email is already used by another account.';
+                } else if (error?.message === 'DISPLAYNAME_ALREADY_EXISTS') {
+                    errorMessage = 'This display name is already taken. Please choose another.';
+                }
+
+                if (wasNewGoogleUser && signedInGoogleUser) {
+                    await rollbackNewAuthUserIfNeeded(signedInGoogleUser);
+                }
+                
+                showMessage(errorMessage, 'error');
+                setLoading(false);
+            }
+        };
+    </script>
+</body>
+</html>

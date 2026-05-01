@@ -1,0 +1,1121 @@
+/* ========================================
+   GAME LOBBY - lobby.css
+   Exact replica of gamelobby.png design
+   ======================================== */
+
+/* ========================================
+   START SCREEN BACKGROUND & LAYOUT
+   ======================================== */
+#start-screen {
+    background: linear-gradient(180deg, #000000 0%, #000000 40%, #0a1a00 70%, #0d2600 100%) !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    position: relative;
+}
+
+/* Animated Neon Green Wavy Background */
+.lobby-wavy-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.lobby-wavy-bg .wavy-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.lobby-waves .wave {
+    transform-origin: center;
+}
+
+/* Each wave gets its own unique animation, speed, and delay */
+.lobby-waves .wave1 { animation: lobbyWave1 4.5s ease-in-out infinite; }
+.lobby-waves .wave2 { animation: lobbyWave2 5.2s ease-in-out infinite -1.4s; }
+.lobby-waves .wave3 { animation: lobbyWave3 3.8s ease-in-out infinite -0.6s; }
+.lobby-waves .wave4 { animation: lobbyWave4 6.0s ease-in-out infinite -2.2s; }
+.lobby-waves .wave5 { animation: lobbyWave5 4.0s ease-in-out infinite -3.0s; }
+.lobby-waves .wave6 { animation: lobbyWave6 5.5s ease-in-out infinite -1.0s; }
+.lobby-waves .wave7 { animation: lobbyWave7 4.8s ease-in-out infinite -2.6s; }
+.lobby-waves .wave8 { animation: lobbyWave8 5.8s ease-in-out infinite -0.8s; }
+
+@keyframes lobbyWave1 {
+    0%   { transform: translateX(0) translateY(0); }
+    20%  { transform: translateX(-40px) translateY(18px); }
+    50%  { transform: translateX(-90px) translateY(-10px); }
+    80%  { transform: translateX(-35px) translateY(-22px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes lobbyWave2 {
+    0%   { transform: translateX(0) translateY(0); }
+    25%  { transform: translateX(30px) translateY(-20px); }
+    50%  { transform: translateX(-70px) translateY(15px); }
+    75%  { transform: translateX(-30px) translateY(25px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes lobbyWave3 {
+    0%   { transform: translateX(0) translateY(0); }
+    15%  { transform: translateX(-55px) translateY(12px); }
+    40%  { transform: translateX(-110px) translateY(-8px); }
+    65%  { transform: translateX(-60px) translateY(-28px); }
+    85%  { transform: translateX(-15px) translateY(10px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes lobbyWave4 {
+    0%   { transform: translateX(0) translateY(0); }
+    30%  { transform: translateX(20px) translateY(30px); }
+    50%  { transform: translateX(-80px) translateY(5px); }
+    70%  { transform: translateX(-50px) translateY(-20px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes lobbyWave5 {
+    0%   { transform: translateX(0) translateY(0); }
+    20%  { transform: translateX(-65px) translateY(-15px); }
+    45%  { transform: translateX(-100px) translateY(20px); }
+    70%  { transform: translateX(-45px) translateY(30px); }
+    90%  { transform: translateX(-10px) translateY(-8px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes lobbyWave6 {
+    0%   { transform: translateX(0) translateY(0); }
+    25%  { transform: translateX(-45px) translateY(-25px); }
+    50%  { transform: translateX(-95px) translateY(12px); }
+    75%  { transform: translateX(-40px) translateY(18px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes lobbyWave7 {
+    0%   { transform: translateX(0) translateY(0); }
+    20%  { transform: translateX(25px) translateY(22px); }
+    40%  { transform: translateX(-50px) translateY(-12px); }
+    60%  { transform: translateX(-85px) translateY(16px); }
+    80%  { transform: translateX(-30px) translateY(-18px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes lobbyWave8 {
+    0%   { transform: translateX(0) translateY(0); }
+    15%  { transform: translateX(-35px) translateY(28px); }
+    35%  { transform: translateX(-75px) translateY(-5px); }
+    55%  { transform: translateX(-105px) translateY(-22px); }
+    80%  { transform: translateX(-50px) translateY(14px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+/* ========================================
+   TOP HEADER BANNER
+   ======================================== */
+.lobby-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(72, 255, 0, 0.1);
+}
+
+.lobby-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.nod-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nod-logo img {
+    height: 40px;
+    width: auto;
+}
+
+.nod-logo-text {
+    font-family: 'Iceberg', cursive;
+    font-size: 24px;
+    color: #48FF00;
+    letter-spacing: 2px;
+    font-weight: 400;
+}
+
+.lobby-header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Leaderboard Button */
+.lobby-leaderboard-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: transparent;
+    border: 2px solid #48FF00;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+}
+
+.lobby-leaderboard-btn:hover {
+    background: rgba(72, 255, 0, 0.15);
+    box-shadow: 0 0 12px rgba(72, 255, 0, 0.3);
+}
+
+/* User Avatar in Header */
+.lobby-user-avatar-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #48FF00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s;
+    border: 2px solid #48FF00;
+    flex-shrink: 0;
+}
+
+.lobby-user-avatar-wrapper:hover {
+    box-shadow: 0 0 15px rgba(72, 255, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.lobby-user-avatar-letter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    line-height: 1;
+}
+
+.lobby-user-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Username in Header */
+.lobby-username {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Logout Button */
+.lobby-logout-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: transparent;
+    border: 2px solid #48FF00;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.lobby-logout-btn:hover {
+    background: rgba(72, 255, 0, 0.15);
+    box-shadow: 0 0 12px rgba(72, 255, 0, 0.3);
+}
+
+/* Hamburger Menu */
+.hamburger-menu-wrapper {
+    position: relative;
+}
+
+.hamburger-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 2px solid #48FF00;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 8px;
+    transition: all 0.3s;
+}
+
+.hamburger-btn:hover {
+    background: rgba(72, 255, 0, 0.15);
+}
+
+.hamburger-btn span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #48FF00;
+    transition: all 0.3s;
+}
+
+.hamburger-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid rgba(72, 255, 0, 0.3);
+    border-radius: 10px;
+    min-width: 200px;
+    padding: 8px 0;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.hamburger-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.hamburger-dropdown a {
+    display: block;
+    padding: 12px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.hamburger-dropdown a:hover {
+    background: rgba(72, 255, 0, 0.1);
+    color: #48FF00;
+}
+
+/* ========================================
+   LOBBY CONTENT AREA
+   ======================================== */
+.lobby-content {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1100px;
+    padding: 20px 30px 40px;
+    margin: 0 auto;
+    flex: 1;
+}
+
+/* ========================================
+   TITLE SECTION
+   ======================================== */
+.lobby-title-section {
+    text-align: center;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.lobby-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+/* Swords */
+.lobby-swords {
+    position: relative;
+    width: 180px;
+    height: 160px;
+    flex-shrink: 0;
+}
+
+.sword-img {
+    position: absolute;
+    height: 160px;
+    width: auto;
+}
+
+.sword-back {
+    left: 0;
+    top: 0;
+    z-index: 1;
+    filter: brightness(0.85);
+}
+
+.sword-front {
+    left: 20px;
+    top: 0;
+    z-index: 2;
+}
+
+/* Card Battle Title */
+.lobby-game-title {
+    font-family: 'Iceberg', cursive;
+    font-size: 5rem;
+    font-weight: 400;
+    color: #48FF00;
+    text-shadow:
+        0 0 10px rgba(72, 255, 0, 0.8),
+        0 0 20px rgba(72, 255, 0, 0.5),
+        0 0 40px rgba(72, 255, 0, 0.3),
+        0 0 80px rgba(72, 255, 0, 0.15);
+    letter-spacing: 6px;
+    white-space: nowrap;
+}
+
+/* Card Art on Right */
+.lobby-cardart {
+    flex-shrink: 0;
+    width: 220px;
+    height: 200px;
+}
+
+.cardart-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0, 100, 0, 0.3));
+}
+
+/* Subtitle */
+.lobby-subtitle {
+    font-family: 'Iceberg', cursive;
+    font-size: 2rem;
+    color: #386900;
+    letter-spacing: 2px;
+    margin-top: -5px;
+}
+
+/* ========================================
+   PLAYER CARDS SECTION
+   ======================================== */
+.lobby-players-row {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.lobby-player-card {
+    flex: 1;
+    max-width: 480px;
+    border-radius: 16px;
+    padding: 22px 28px;
+    position: relative;
+}
+
+/* Player 1 - Blue Theme */
+.lobby-p1-card {
+    background: rgba(15, 30, 70, 0.85);
+    border: 2px solid #3b82f6;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.25), inset 0 0 30px rgba(59, 130, 246, 0.08);
+}
+
+/* Player 2 - Red Theme */
+.lobby-p2-card {
+    background: rgba(70, 15, 15, 0.85);
+    border: 2px solid #ef4444;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.25), inset 0 0 30px rgba(239, 68, 68, 0.08);
+}
+
+/* Player Label */
+.lobby-player-label {
+    font-family: 'Iceberg', cursive;
+    font-size: 22px;
+    color: #3b82f6;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lobby-p2-label {
+    color: #ef4444;
+}
+
+.lobby-you-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    background: #48FF00;
+    color: #000;
+    padding: 2px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lobby-lock-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: #ef4444;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Player Body - Profile + Stats */
+.lobby-player-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.lobby-player-profile {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+/* Profile Picture */
+.lobby-profile-pic-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 14px;
+    overflow: visible;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.lobby-profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 14px;
+    object-fit: cover;
+    background: #2a3a6a;
+    border: 2px solid rgba(59, 130, 246, 0.4);
+}
+
+.lobby-p2-card .lobby-profile-pic {
+    background: #5a2a2a;
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.lobby-profile-plus {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #3b82f6;
+    color: #fff;
+    border: 2px solid #1a2a5a;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    padding: 0;
+}
+
+.lobby-profile-plus:hover {
+    background: #5b9cf6;
+    transform: scale(1.1);
+}
+
+.lobby-profile-plus-p2 {
+    background: #ef4444;
+    border-color: #5a1a1a;
+}
+
+.lobby-profile-plus-p2:hover {
+    background: #f66;
+}
+
+/* Player Name */
+.lobby-player-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Player Stats - Bordered Box */
+.lobby-player-stats {
+    background: rgba(20, 35, 90, 0.7);
+    border: 2px solid rgba(59, 130, 246, 0.4);
+    border-radius: 12px;
+    padding: 15px 28px;
+    text-align: center;
+    min-width: 160px;
+    flex-shrink: 0;
+}
+
+.lobby-p2-card .lobby-player-stats {
+    background: rgba(90, 20, 20, 0.7);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.lobby-stats-title {
+    font-family: 'Iceberg', cursive;
+    font-size: 24px;
+    color: #3b82f6;
+    margin-bottom: 10px;
+}
+
+.lobby-p2-card .lobby-stats-title {
+    color: #ef4444;
+}
+
+.lobby-stat-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 17px;
+    margin: 6px 0;
+}
+
+.lobby-stat-item.wins {
+    color: #3b82f6;
+}
+
+.lobby-stat-item.losses {
+    color: #3b82f6;
+}
+
+.lobby-p2-card .lobby-stat-item.wins {
+    color: #ef4444;
+}
+
+.lobby-p2-card .lobby-stat-item.losses {
+    color: #ef4444;
+}
+
+/* ========================================
+   PLAYER 2 INPUT SECTION
+   ======================================== */
+.lobby-p2-input-section {
+    padding: 5px 0;
+}
+
+.lobby-p2-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.lobby-p2-input-group input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.lobby-p2-input-group input:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+
+.lobby-p2-input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+}
+
+/* Verify Button */
+.lobby-verify-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: #ef4444;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.lobby-verify-btn:hover:not(:disabled) {
+    background: #dc2626;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+.lobby-verify-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Player 2 Status Messages */
+.player2-status {
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    min-height: 18px;
+}
+
+.player2-status.success {
+    color: #48FF00;
+}
+
+.player2-status.error {
+    color: #ff3333;
+    font-weight: 600;
+}
+
+/* Change Player Button */
+.lobby-change-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.lobby-change-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* ========================================
+   START BATTLE BUTTON
+   ======================================== */
+.lobby-start-btn {
+    font-family: 'Bungee Inline', cursive;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #ffffff;
+    background: rgb(10 30 5 / 76%);
+    border: 3px solid #48FF00;
+    border-radius: 50px;
+    padding: 18px 80px;
+    cursor: pointer;
+    letter-spacing: 3px;
+    transition: all 0.3s;
+    text-shadow: none;
+    box-shadow: none;
+    position: relative;
+    z-index: 5;
+}
+
+.lobby-start-btn:hover:not(:disabled) {
+    background: rgba(72, 255, 0, 0.15);
+    box-shadow:
+        0 0 25px rgba(72, 255, 0, 0.5),
+        0 0 50px rgba(72, 255, 0, 0.2),
+        inset 0 0 20px rgba(72, 255, 0, 0.1);
+    text-shadow:
+        0 0 10px rgba(72, 255, 0, 0.6),
+        0 0 20px rgba(72, 255, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.lobby-start-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-shadow: none;
+    box-shadow: none;
+}
+
+.lobby-start-btn:not(:disabled) {
+    text-shadow:
+        0 0 10px rgba(72, 255, 0, 0.6),
+        0 0 20px rgba(72, 255, 0, 0.3);
+    box-shadow:
+        0 0 15px rgba(72, 255, 0, 0.3),
+        0 0 30px rgba(72, 255, 0, 0.1),
+        inset 0 0 15px rgba(72, 255, 0, 0.05);
+}
+
+.lobby-start-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* ========================================
+   FIREBASE STATUS
+   ======================================== */
+.lobby-firebase-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    color: #48FF00;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    position: relative;
+    z-index: 5;
+}
+
+/* ========================================
+   PROFILE PICTURE CROP MODAL
+   ======================================== */
+.crop-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.crop-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 440px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.crop-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.crop-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    padding: 0 5px;
+    line-height: 1;
+}
+
+.crop-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.crop-upload-text-btn {
+    background: none;
+    border: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.crop-upload-text-btn:hover {
+    color: #000;
+}
+
+.crop-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: #aaa;
+    min-height: 350px;
+    position: relative;
+}
+
+.crop-circle {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    cursor: grab;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+}
+
+.crop-circle:active {
+    cursor: grabbing;
+}
+
+#crop-preview-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    min-height: 100%;
+    object-fit: cover;
+    transform-origin: center center;
+    user-select: none;
+    pointer-events: none;
+}
+
+.crop-controls {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    background: #aaa;
+}
+
+.crop-zoom-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.crop-zoom-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.crop-zoom-btn:hover {
+    background: #f0f0f0;
+}
+
+.crop-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 20px;
+    background: #fff;
+}
+
+.crop-confirm-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #4caf50;
+    color: #fff;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    transition: all 0.2s;
+}
+
+.crop-confirm-btn:hover {
+    background: #43a047;
+    transform: scale(1.05);
+}
+
+/* ========================================
+   RESPONSIVE - LOBBY
+   ======================================== */
+@media (max-width: 900px) {
+    .lobby-header {
+        padding: 12px 20px;
+    }
+    
+    .lobby-game-title {
+        font-size: 3.5rem;
+    }
+    
+    .lobby-swords {
+        width: 120px;
+        height: 110px;
+    }
+    
+    .sword-img {
+        height: 110px;
+    }
+    
+    .lobby-cardart {
+        width: 150px;
+        height: 140px;
+    }
+    
+    .lobby-players-row {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .lobby-header-right {
+        gap: 10px;
+    }
+    
+    .lobby-username {
+        display: none;
+    }
+    
+    .lobby-game-title {
+        font-size: 2.5rem;
+    }
+    
+    .lobby-swords {
+        width: 90px;
+        height: 80px;
+    }
+    
+    .sword-img {
+        height: 80px;
+    }
+    
+    .sword-front {
+        left: 15px;
+    }
+    
+    .lobby-cardart {
+        width: 110px;
+        height: 100px;
+    }
+    
+    .lobby-players-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .lobby-player-card {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .lobby-start-btn {
+        font-size: 1.5rem;
+        padding: 15px 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lobby-header {
+        padding: 10px 15px;
+    }
+    
+    .nod-logo img {
+        height: 30px;
+    }
+    
+    .nod-logo-text {
+        font-size: 18px;
+    }
+    
+    .lobby-leaderboard-btn,
+    .lobby-logout-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+    
+    .lobby-user-avatar-wrapper {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .lobby-user-avatar-letter {
+        font-size: 14px;
+    }
+    
+    .lobby-game-title {
+        font-size: 2rem;
+        letter-spacing: 3px;
+    }
+    
+    .lobby-swords {
+        width: 60px;
+        height: 55px;
+    }
+    
+    .sword-img {
+        height: 55px;
+    }
+    
+    .sword-front {
+        left: 10px;
+    }
+    
+    .lobby-cardart {
+        width: 55px;
+        height: 50px;
+    }
+    
+    .lobby-content {
+        padding: 10px 15px 30px;
+    }
+    
+    .lobby-player-card {
+        padding: 15px;
+    }
+    
+    .lobby-player-body {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .lobby-player-stats {
+        margin-left: 0;
+        min-width: unset;
+        width: 100%;
+    }
+    
+    .lobby-profile-pic-wrapper,
+    .lobby-profile-pic {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .lobby-start-btn {
+        font-size: 1.2rem;
+        padding: 12px 40px;
+    }
+    
+    .lobby-p2-input-group {
+        flex-direction: column;
+    }
+    
+    .lobby-verify-btn {
+        width: 100%;
+    }
+}

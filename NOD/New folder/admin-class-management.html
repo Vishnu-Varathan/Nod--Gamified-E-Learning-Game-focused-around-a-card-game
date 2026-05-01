@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>NOD - Admin Class Management</title>
+	<link href="https://fonts.googleapis.com/css2?family=Iceberg&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+	<link rel="icon" href="Untitled 1.png" type="image">
+	<style>
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		:root {
+			--bg: #0a0a0a;
+			--panel: #141414;
+			--panel-2: #111;
+			--line: #2a2a2a;
+			--line-soft: #1e1e1e;
+			--text: #fff;
+			--muted: #8a8a8a;
+			--brand: #48ff00;
+			--danger: #ff5a5a;
+			--warning: #ffd54d;
+		}
+		body {
+			font-family: 'Inter', sans-serif;
+			color: var(--text);
+			min-height: 100vh;
+			background:
+				radial-gradient(circle at 8% 0%, rgba(72,255,0,.1), transparent 33%),
+				radial-gradient(circle at 92% 0%, rgba(0,148,255,.14), transparent 42%),
+				var(--bg);
+		}
+		.header {
+			position: sticky;
+			top: 0;
+			z-index: 90;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			padding: 14px 22px;
+			border-bottom: 1px solid var(--line);
+			background: rgba(16,16,16,.9);
+			backdrop-filter: blur(8px);
+		}
+		.logo { display: flex; align-items: center; gap: 10px; }
+		.logo img { height: 34px; }
+		.logo span { font-family: 'Iceberg', cursive; color: var(--brand); font-size: 24px; }
+		.header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+		.btn {
+			border: 1px solid #333;
+			background: rgba(255,255,255,.02);
+			color: #aaa;
+			border-radius: 10px;
+			padding: 10px 14px;
+			min-height: 40px;
+			line-height: 1;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all .2s ease;
+		}
+		.btn:hover { border-color: var(--brand); color: var(--brand); }
+		.btn-primary {
+			background: linear-gradient(135deg,#48ff00,#00bf5f);
+			border: none;
+			color: #001000;
+			box-shadow: 0 10px 24px rgba(72,255,0,.2);
+		}
+		.btn-danger:hover { border-color: var(--danger); color: var(--danger); }
+		.btn-warning:hover { border-color: var(--warning); color: var(--warning); }
+		.container { max-width: 1300px; margin: 0 auto; padding: 24px; }
+		.hero {
+			border: 1px solid var(--line);
+			border-radius: 18px;
+			background: linear-gradient(170deg, #151515, #0f0f0f);
+			padding: 20px;
+			box-shadow: 0 20px 44px rgba(0,0,0,.35);
+			margin-bottom: 16px;
+		}
+		.hero h1 {
+			font-family: 'Iceberg', cursive;
+			color: var(--brand);
+			font-size: 42px;
+			line-height: 1;
+			margin-bottom: 8px;
+		}
+		.muted { color: var(--muted); font-size: 13px; line-height: 1.45; }
+		.stats { margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+		.stat {
+			background: var(--panel-2);
+			border: 1px solid var(--line-soft);
+			border-radius: 12px;
+			padding: 12px;
+		}
+		.stat-value { color: var(--brand); font-size: 30px; font-weight: 800; line-height: 1; }
+		.stat-label { color: #8b8b8b; text-transform: uppercase; letter-spacing: .7px; font-size: 11px; margin-top: 6px; }
+
+		.card {
+			border: 1px solid var(--line);
+			border-radius: 16px;
+			background: linear-gradient(180deg,#141414,#121212);
+			padding: 14px;
+			box-shadow: 0 18px 40px rgba(0,0,0,.32);
+		}
+		.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+		.input, .select {
+			background: #0b0b0b;
+			border: 1px solid #2f2f2f;
+			color: #fff;
+			border-radius: 10px;
+			padding: 10px 12px;
+			min-height: 40px;
+			min-width: 180px;
+		}
+		.input:focus, .select:focus {
+			outline: none;
+			border-color: var(--brand);
+			box-shadow: 0 0 0 2px rgba(72,255,0,.13);
+		}
+
+		.table-wrap { overflow: auto; border: 1px solid var(--line-soft); border-radius: 12px; }
+		table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+		th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line-soft); font-size: 13px; vertical-align: top; }
+		th { background: #101010; color: var(--brand); font-size: 12px; text-transform: uppercase; letter-spacing: .7px; }
+		.mono { font-family: 'IBM Plex Mono', monospace; }
+		.badge {
+			display: inline-flex;
+			border: 1px solid #2f2f2f;
+			border-radius: 999px;
+			padding: 4px 9px;
+			font-size: 11px;
+			font-weight: 700;
+		}
+		.badge.active { color: var(--brand); border-color: rgba(72,255,0,.35); }
+		.badge.archived { color: #ffc46a; border-color: rgba(255,196,106,.4); }
+		.row-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+		.btn-mini { min-height: 32px; padding: 7px 10px; font-size: 12px; }
+		.status-line { margin-top: 10px; color: #9a9a9a; font-size: 12px; }
+
+		.modal-overlay {
+			position: fixed;
+			inset: 0;
+			display: none;
+			align-items: flex-start;
+			justify-content: center;
+			background: rgba(0,0,0,.78);
+			z-index: 200;
+			padding: 18px;
+			overflow: auto;
+		}
+		.modal-overlay.active { display: flex; }
+		.modal {
+			width: 100%;
+			max-width: 840px;
+			border: 1px solid #333;
+			border-radius: 14px;
+			background: #121212;
+			box-shadow: 0 24px 60px rgba(0,0,0,.45);
+			overflow: hidden;
+		}
+		.modal-head, .modal-foot {
+			padding: 14px 16px;
+			background: #171717;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 10px;
+			border-bottom: 1px solid #252525;
+		}
+		.modal-foot { border-top: 1px solid #252525; border-bottom: none; justify-content: flex-end; flex-wrap: wrap; }
+		.modal-body { padding: 16px; }
+		.grid { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 10px; }
+		.field { display: flex; flex-direction: column; gap: 6px; }
+		.field label { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: #b9b9b9; }
+		.field.full { grid-column: 1 / -1; }
+
+		.report-sheet {
+			border: 1px solid #2a2a2a;
+			border-radius: 12px;
+			background: #0f0f0f;
+			padding: 14px;
+		}
+		.report-title { font-size: 24px; font-family: 'Iceberg', cursive; color: var(--brand); margin-bottom: 8px; }
+		.report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; margin-bottom: 10px; }
+		.report-cell { border: 1px solid #232323; border-radius: 10px; padding: 8px; background: #121212; }
+		.report-cell span { display: block; color: #8e8e8e; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; }
+		.report-cell strong { font-size: 16px; }
+
+		@media (max-width: 900px) {
+			.container { padding: 14px; }
+			.hero h1 { font-size: 34px; }
+			.grid { grid-template-columns: 1fr; }
+		}
+		@media (max-width: 500px) {
+			.header { padding: 12px; }
+			.hero h1 { font-size: 29px; }
+			.btn { width: 100%; }
+			.toolbar .btn { width: auto; }
+			.header-actions { width: 100%; }
+			.header-actions .btn { flex: 1 1 100%; }
+			.input, .select { width: 100%; min-width: 0; }
+		}
+	</style>
+</head>
+<body>
+<header class="header">
+	<div class="logo"><img src="Untitled 1.png" alt="NOD"><span>NOD</span></div>
+	<div class="header-actions">
+		<button class="btn" id="back-btn">Back to Admin Dashboard</button>
+		<button class="btn" id="logout-btn">Logout</button>
+	</div>
+</header>
+
+<main class="container">
+	<section class="hero">
+		<h1>Class Management</h1>
+		<p class="muted">Admin-only management for teacher-created classrooms. Supports editing, leaderboard resets, archive/read-only flagging, classroom deletion, and report export.</p>
+		<div class="stats">
+			<div class="stat"><div class="stat-value" id="stat-classrooms">0</div><div class="stat-label">Classrooms</div></div>
+			<div class="stat"><div class="stat-value" id="stat-active">0</div><div class="stat-label">Active</div></div>
+			<div class="stat"><div class="stat-value" id="stat-archived">0</div><div class="stat-label">Archived</div></div>
+			<div class="stat"><div class="stat-value" id="stat-students">0</div><div class="stat-label">Students</div></div>
+			<div class="stat"><div class="stat-value" id="stat-quizzes">0</div><div class="stat-label">Quizzes</div></div>
+			<div class="stat"><div class="stat-value" id="stat-attempts">0</div><div class="stat-label">Attempts</div></div>
+		</div>
+	</section>
+
+	<section class="card">
+		<div class="toolbar">
+			<input class="input" id="search-input" placeholder="Search classroom, teacher, code...">
+			<select class="select" id="status-filter">
+				<option value="all">All status</option>
+				<option value="active">Active only</option>
+				<option value="archived">Archived only</option>
+			</select>
+			<button class="btn" id="refresh-btn">Refresh</button>
+		</div>
+
+		<div class="table-wrap">
+			<table>
+				<thead>
+					<tr>
+						<th>Classroom</th>
+						<th>Teacher</th>
+						<th>Code</th>
+						<th>Status</th>
+						<th>Students</th>
+						<th>Quizzes</th>
+						<th>Attempts</th>
+						<th>Updated</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="classroom-table-body">
+					<tr><td colspan="9" class="muted">Loading classrooms...</td></tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="status-line" id="status-line">Ready.</div>
+	</section>
+</main>
+
+<div class="modal-overlay" id="edit-modal" aria-hidden="true">
+	<div class="modal" role="dialog" aria-modal="true" aria-label="Edit classroom">
+		<div class="modal-head">
+			<h3>Edit Classroom</h3>
+			<button class="btn btn-mini" id="close-edit-modal">Close</button>
+		</div>
+		<div class="modal-body">
+			<div class="grid">
+				<div class="field"><label>Name *</label><input class="input" id="edit-name"></div>
+				<div class="field"><label>Subject</label><input class="input" id="edit-subject"></div>
+				<div class="field full"><label>Description</label><input class="input" id="edit-description"></div>
+				<div class="field full"><label>Profile Picture URL</label><input class="input" id="edit-picture"></div>
+			</div>
+			<p class="muted" style="margin-top:8px;">Editing updates Firestore in real time.</p>
+		</div>
+		<div class="modal-foot">
+			<button class="btn" id="cancel-edit-btn">Cancel</button>
+			<button class="btn btn-primary" id="save-edit-btn">Save Changes</button>
+		</div>
+	</div>
+</div>
+
+<div class="modal-overlay" id="report-modal" aria-hidden="true">
+	<div class="modal" role="dialog" aria-modal="true" aria-label="Classroom report">
+		<div class="modal-head">
+			<h3>Classroom Report</h3>
+			<button class="btn btn-mini" id="close-report-modal">Close</button>
+		</div>
+		<div class="modal-body">
+			<div id="report-content" class="report-sheet"></div>
+		</div>
+		<div class="modal-foot">
+			<button class="btn" id="report-close-btn">Close</button>
+			<button class="btn btn-primary" id="export-report-btn">Export PDF</button>
+		</div>
+	</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+let me = null;
+let meData = null;
+let selectedClassroomId = null;
+let reportDataCache = null;
+
+let classrooms = [];
+let members = [];
+let quizzes = [];
+let sessions = [];
+
+let unsubClassrooms = null;
+let unsubMembers = null;
+let unsubQuizzes = null;
+let unsubSessions = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+	initializeFirebase();
+	bindEvents();
+	waitForAuth();
+});
+
+window.addEventListener('beforeunload', cleanupSubscriptions);
+
+function bindEvents() {
+	document.getElementById('logout-btn').addEventListener('click', () => auth.signOut().then(() => location.href = 'login.html'));
+	document.getElementById('back-btn').addEventListener('click', () => location.href = 'admin-dashboard.html');
+	document.getElementById('search-input').addEventListener('input', renderTable);
+	document.getElementById('status-filter').addEventListener('change', renderTable);
+	document.getElementById('refresh-btn').addEventListener('click', () => renderTable());
+
+	document.getElementById('close-edit-modal').addEventListener('click', closeEditModal);
+	document.getElementById('cancel-edit-btn').addEventListener('click', closeEditModal);
+	document.getElementById('save-edit-btn').addEventListener('click', saveClassroomEdits);
+	document.getElementById('edit-modal').addEventListener('click', (e) => {
+		if (e.target.id === 'edit-modal') closeEditModal();
+	});
+
+	document.getElementById('close-report-modal').addEventListener('click', closeReportModal);
+	document.getElementById('report-close-btn').addEventListener('click', closeReportModal);
+	document.getElementById('export-report-btn').addEventListener('click', exportReportPdf);
+	document.getElementById('report-modal').addEventListener('click', (e) => {
+		if (e.target.id === 'report-modal') closeReportModal();
+	});
+}
+
+function waitForAuth() {
+	const timer = setInterval(() => {
+		if (!auth) return;
+		clearInterval(timer);
+		auth.onAuthStateChanged(handleAuth);
+	}, 100);
+}
+
+async function handleAuth(user) {
+	if (!user) {
+		location.href = 'login.html';
+		return;
+	}
+
+	me = user;
+	meData = await getUserByUid(user.uid);
+	if (!meData) {
+		alert('Your user profile was not found.');
+		location.href = 'login.html';
+		return;
+	}
+
+	if (meData.role !== 'admin') {
+		alert('Only admin users can access class management.');
+		location.href = meData.role === 'teacher' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+		return;
+	}
+
+	setupRealtimeSubscriptions();
+}
+
+function setupRealtimeSubscriptions() {
+	cleanupSubscriptions();
+
+	unsubClassrooms = classroomsCollection.onSnapshot((snapshot) => {
+		classrooms = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+		classrooms.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+		renderTable();
+	}, (error) => {
+		console.error(error);
+		setStatus('Failed to load classrooms in real time.');
+	});
+
+	unsubMembers = classroomMembersCollection.onSnapshot((snapshot) => {
+		members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+		renderTable();
+	});
+
+	unsubQuizzes = quizzesCollection.onSnapshot((snapshot) => {
+		quizzes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+		renderTable();
+	});
+
+	unsubSessions = quizSessionsCollection.onSnapshot((snapshot) => {
+		sessions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+		renderTable();
+	});
+}
+
+function cleanupSubscriptions() {
+	if (unsubClassrooms) unsubClassrooms();
+	if (unsubMembers) unsubMembers();
+	if (unsubQuizzes) unsubQuizzes();
+	if (unsubSessions) unsubSessions();
+	unsubClassrooms = null;
+	unsubMembers = null;
+	unsubQuizzes = null;
+	unsubSessions = null;
+}
+
+function isArchivedClassroom(classroom) {
+	return classroom?.isArchived === true || classroom?.readOnly === true || classroom?.status === 'archived';
+}
+
+function getClassroomRows() {
+	const studentsByClass = new Map();
+	const quizzesByClass = new Map();
+	const attemptsByClass = new Map();
+
+	members.forEach(member => {
+		if (member.role !== 'student') return;
+		const count = studentsByClass.get(member.classroomId) || 0;
+		studentsByClass.set(member.classroomId, count + 1);
+	});
+
+	quizzes.forEach(quiz => {
+		if (quiz.status && quiz.status !== 'active') return;
+		const count = quizzesByClass.get(quiz.classroomId) || 0;
+		quizzesByClass.set(quiz.classroomId, count + 1);
+	});
+
+	sessions.forEach(session => {
+		const count = attemptsByClass.get(session.classroomId) || 0;
+		attemptsByClass.set(session.classroomId, count + 1);
+	});
+
+	return classrooms.map(classroom => {
+		const archived = isArchivedClassroom(classroom);
+		return {
+			...classroom,
+			archived,
+			students: studentsByClass.get(classroom.id) || 0,
+			quizzes: quizzesByClass.get(classroom.id) || 0,
+			attempts: attemptsByClass.get(classroom.id) || 0
+		};
+	});
+}
+
+function renderTable() {
+	const body = document.getElementById('classroom-table-body');
+	const search = document.getElementById('search-input').value.trim().toLowerCase();
+	const statusFilter = document.getElementById('status-filter').value;
+
+	const rows = getClassroomRows().filter(row => {
+		const matchSearch = !search || [row.name, row.teacherName, row.code, row.subject]
+			.map(v => (v || '').toString().toLowerCase())
+			.some(v => v.includes(search));
+		const state = row.archived ? 'archived' : 'active';
+		const matchStatus = statusFilter === 'all' || statusFilter === state;
+		return matchSearch && matchStatus;
+	});
+
+	renderSummary(rows);
+
+	if (!rows.length) {
+		body.innerHTML = '<tr><td colspan="9" class="muted">No classrooms found for this filter.</td></tr>';
+		return;
+	}
+
+	body.innerHTML = rows.map(row => {
+		const badge = row.archived
+			? '<span class="badge archived">Archived / Read-Only</span>'
+			: '<span class="badge active">Active</span>';
+
+		return `
+			<tr>
+				<td>
+					<strong>${escapeHtml(row.name || 'Untitled Classroom')}</strong><br>
+					<span class="muted">${escapeHtml(row.subject || 'No subject')}</span>
+				</td>
+				<td>${escapeHtml(row.teacherName || 'Unknown')}</td>
+				<td class="mono">${escapeHtml(row.code || 'N/A')}</td>
+				<td>${badge}</td>
+				<td>${row.students}</td>
+				<td>${row.quizzes}</td>
+				<td>${row.attempts}</td>
+				<td>${formatDate(row.updatedAt || row.createdAt)}</td>
+				<td>
+					<div class="row-actions">
+						<button class="btn btn-mini" onclick="openEditModal('${row.id}')">Edit</button>
+						<button class="btn btn-mini btn-warning" onclick="resetClassroomLeaderboardAction('${row.id}')">Reset Class LB</button>
+						<button class="btn btn-mini" onclick="toggleArchiveClassroomAction('${row.id}')">${row.archived ? 'Unarchive' : 'Archive'}</button>
+						<button class="btn btn-mini" onclick="openReport('${row.id}')">Report</button>
+						<button class="btn btn-mini btn-danger" onclick="deleteClassroomAction('${row.id}')">Delete</button>
+					</div>
+				</td>
+			</tr>
+		`;
+	}).join('');
+}
+
+function renderSummary(rows) {
+	const allRows = getClassroomRows();
+	const activeCount = allRows.filter(r => !r.archived).length;
+	const archivedCount = allRows.filter(r => r.archived).length;
+	const totalStudents = rows.reduce((sum, row) => sum + (row.students || 0), 0);
+	const totalQuizzes = rows.reduce((sum, row) => sum + (row.quizzes || 0), 0);
+	const totalAttempts = rows.reduce((sum, row) => sum + (row.attempts || 0), 0);
+
+	document.getElementById('stat-classrooms').textContent = allRows.length;
+	document.getElementById('stat-active').textContent = activeCount;
+	document.getElementById('stat-archived').textContent = archivedCount;
+	document.getElementById('stat-students').textContent = totalStudents;
+	document.getElementById('stat-quizzes').textContent = totalQuizzes;
+	document.getElementById('stat-attempts').textContent = totalAttempts;
+}
+
+function setStatus(message) {
+	const el = document.getElementById('status-line');
+	el.textContent = message;
+}
+
+function openEditModal(classroomId) {
+	const classroom = classrooms.find(item => item.id === classroomId);
+	if (!classroom) return;
+
+	selectedClassroomId = classroomId;
+	document.getElementById('edit-name').value = classroom.name || '';
+	document.getElementById('edit-subject').value = classroom.subject || '';
+	document.getElementById('edit-description').value = classroom.description || '';
+	document.getElementById('edit-picture').value = classroom.profilePicture || '';
+
+	document.getElementById('edit-modal').classList.add('active');
+	document.getElementById('edit-modal').setAttribute('aria-hidden', 'false');
+}
+
+function closeEditModal() {
+	selectedClassroomId = null;
+	document.getElementById('edit-modal').classList.remove('active');
+	document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');
+}
+
+async function saveClassroomEdits() {
+	if (!selectedClassroomId) return;
+
+	const name = document.getElementById('edit-name').value.trim();
+	const subject = document.getElementById('edit-subject').value.trim();
+	const description = document.getElementById('edit-description').value.trim();
+	const picture = document.getElementById('edit-picture').value.trim();
+
+	if (!name) {
+		alert('Classroom name is required.');
+		return;
+	}
+
+	try {
+		await updateClassroom(selectedClassroomId, {
+			name,
+			subject,
+			description,
+			profilePicture: picture || null,
+			lastAdminEditorUid: me.uid,
+			lastAdminEditorName: meData.displayName || me.email || 'Admin'
+		});
+		setStatus('Classroom details updated.');
+		closeEditModal();
+	} catch (error) {
+		console.error(error);
+		alert(error.message || 'Failed to update classroom.');
+	}
+}
+
+async function resetClassroomLeaderboardAction(classroomId) {
+	const classroom = classrooms.find(item => item.id === classroomId);
+	if (!classroom) return;
+	if (!confirm(`Reset classroom leaderboard for "${classroom.name}"? This deletes all quiz session attempts inside this classroom.`)) return;
+
+	try {
+		const snapshot = await quizSessionsCollection.where('classroomId', '==', classroomId).get();
+		for (const doc of snapshot.docs) {
+			await doc.ref.delete();
+		}
+		await updateClassroom(classroomId, {
+			leaderboardResetAt: firebase.firestore.FieldValue.serverTimestamp(),
+			leaderboardResetByUid: me.uid,
+			leaderboardResetByName: meData.displayName || me.email || 'Admin'
+		});
+		setStatus(`Classroom leaderboard reset. Removed ${snapshot.size} session records.`);
+	} catch (error) {
+		console.error(error);
+		alert(error.message || 'Failed to reset classroom leaderboard.');
+	}
+}
+
+async function toggleArchiveClassroomAction(classroomId) {
+	const classroom = classrooms.find(item => item.id === classroomId);
+	if (!classroom) return;
+
+	const archived = isArchivedClassroom(classroom);
+	const actionWord = archived ? 'unarchive' : 'archive';
+	const confirmMessage = archived
+		? `Unarchive "${classroom.name}" and mark it editable again?`
+		: `Archive "${classroom.name}"? This will mark the class as read-only and only admin can edit.`;
+
+	if (!confirm(confirmMessage)) return;
+
+	try {
+		await updateClassroom(classroomId, {
+			isArchived: !archived,
+			readOnly: !archived,
+			archivedAt: !archived ? firebase.firestore.FieldValue.serverTimestamp() : null,
+			archivedByUid: !archived ? me.uid : null,
+			archivedByName: !archived ? (meData.displayName || me.email || 'Admin') : null,
+			archiveStateLabel: !archived ? 'archived-read-only' : 'active-editable'
+		});
+		setStatus(`Classroom ${actionWord}d successfully.`);
+	} catch (error) {
+		console.error(error);
+		alert(error.message || 'Archive update failed.');
+	}
+}
+
+async function deleteClassroomAction(classroomId) {
+	const classroom = classrooms.find(item => item.id === classroomId);
+	if (!classroom) return;
+
+	if (!confirm(`Delete classroom "${classroom.name}" including classroom quizzes, sessions, and members? This cannot be undone.`)) return;
+
+	try {
+		await deleteClassroom(classroomId);
+		setStatus(`Classroom "${classroom.name}" deleted.`);
+	} catch (error) {
+		console.error(error);
+		alert(error.message || 'Delete classroom failed.');
+	}
+}
+
+async function openReport(classroomId) {
+	const classroom = classrooms.find(item => item.id === classroomId);
+	if (!classroom) return;
+
+	try {
+		const classMembers = members.filter(member => member.classroomId === classroomId);
+		const classStudents = classMembers.filter(member => member.role === 'student');
+		const classQuizzes = quizzes.filter(quiz => quiz.classroomId === classroomId && (!quiz.status || quiz.status === 'active'));
+		const classSessions = sessions.filter(session => session.classroomId === classroomId);
+		const leaderboard = await getClassroomLeaderboard(classroomId);
+
+		reportDataCache = {
+			generatedAt: new Date(),
+			classroom,
+			classStudents,
+			classQuizzes,
+			classSessions,
+			leaderboard
+		};
+
+		renderReport(reportDataCache);
+		document.getElementById('report-modal').classList.add('active');
+		document.getElementById('report-modal').setAttribute('aria-hidden', 'false');
+	} catch (error) {
+		console.error(error);
+		alert(error.message || 'Failed to generate report.');
+	}
+}
+
+function renderReport(data) {
+	const content = document.getElementById('report-content');
+	const classroom = data.classroom;
+
+	const topRows = (data.leaderboard || []).slice(0, 5);
+	const topHtml = topRows.length
+		? topRows.map((row, index) => `
+			<tr>
+				<td>${index + 1}</td>
+				<td>${escapeHtml(row.name || 'Student')}</td>
+				<td>${row.totalScore || 0}</td>
+				<td>${row.wins || 0}</td>
+				<td>${row.losses || 0}</td>
+			</tr>
+		`).join('')
+		: '<tr><td colspan="5" class="muted">No leaderboard entries yet.</td></tr>';
+
+	content.innerHTML = `
+		<div class="report-title">${escapeHtml(classroom.name || 'Classroom')} Report</div>
+		<p class="muted">Generated ${data.generatedAt.toLocaleString()}</p>
+		<div class="report-grid">
+			<div class="report-cell"><span>Teacher</span><strong>${escapeHtml(classroom.teacherName || 'N/A')}</strong></div>
+			<div class="report-cell"><span>Code</span><strong class="mono">${escapeHtml(classroom.code || 'N/A')}</strong></div>
+			<div class="report-cell"><span>Status</span><strong>${isArchivedClassroom(classroom) ? 'Archived / Read-Only' : 'Active'}</strong></div>
+			<div class="report-cell"><span>Students</span><strong>${data.classStudents.length}</strong></div>
+			<div class="report-cell"><span>Quizzes</span><strong>${data.classQuizzes.length}</strong></div>
+			<div class="report-cell"><span>Attempts</span><strong>${data.classSessions.length}</strong></div>
+		</div>
+		<h4 style="margin:10px 0 8px;">Top 5 Leaderboard</h4>
+		<div class="table-wrap">
+			<table>
+				<thead>
+					<tr><th>#</th><th>Student</th><th>Score</th><th>Wins</th><th>Losses</th></tr>
+				</thead>
+				<tbody>${topHtml}</tbody>
+			</table>
+		</div>
+	`;
+}
+
+function closeReportModal() {
+	reportDataCache = null;
+	document.getElementById('report-modal').classList.remove('active');
+	document.getElementById('report-modal').setAttribute('aria-hidden', 'true');
+}
+
+function exportReportPdf() {
+	if (!reportDataCache) {
+		alert('No report is open for export.');
+		return;
+	}
+
+	const jsPdfApi = window.jspdf;
+	if (!jsPdfApi || !jsPdfApi.jsPDF) {
+		alert('PDF library not available right now.');
+		return;
+	}
+
+	const { jsPDF } = jsPdfApi;
+	const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+	const pageWidth = doc.internal.pageSize.getWidth();
+	const margin = 40;
+	let y = 50;
+
+	const data = reportDataCache;
+	const classroom = data.classroom;
+	const title = `${classroom.name || 'Classroom'} Report`;
+
+	doc.setFont('helvetica', 'bold');
+	doc.setFontSize(20);
+	doc.text(title, margin, y);
+
+	y += 24;
+	doc.setFont('helvetica', 'normal');
+	doc.setFontSize(11);
+	doc.text(`Generated: ${data.generatedAt.toLocaleString()}`, margin, y);
+
+	y += 24;
+	const lines = [
+		`Teacher: ${classroom.teacherName || 'N/A'}`,
+		`Classroom Code: ${classroom.code || 'N/A'}`,
+		`Status: ${isArchivedClassroom(classroom) ? 'Archived / Read-Only' : 'Active'}`,
+		`Students: ${data.classStudents.length}`,
+		`Quizzes: ${data.classQuizzes.length}`,
+		`Attempts: ${data.classSessions.length}`
+	];
+
+	lines.forEach(line => {
+		doc.text(line, margin, y);
+		y += 18;
+	});
+
+	y += 8;
+	doc.setFont('helvetica', 'bold');
+	doc.text('Top Leaderboard', margin, y);
+	y += 18;
+
+	doc.setFont('helvetica', 'normal');
+	const topRows = (data.leaderboard || []).slice(0, 15);
+	if (!topRows.length) {
+		doc.text('No leaderboard entries yet.', margin, y);
+	} else {
+		topRows.forEach((row, index) => {
+			const line = `${index + 1}. ${row.name || 'Student'} | Score ${row.totalScore || 0} | Wins ${row.wins || 0} | Losses ${row.losses || 0}`;
+			const wrapped = doc.splitTextToSize(line, pageWidth - margin * 2);
+			wrapped.forEach(wline => {
+				if (y > 780) {
+					doc.addPage();
+					y = 50;
+				}
+				doc.text(wline, margin, y);
+				y += 15;
+			});
+		});
+	}
+
+	const safeTitle = (classroom.name || 'classroom').replace(/[^a-z0-9-_]+/gi, '_').toLowerCase();
+	doc.save(`${safeTitle}_report.pdf`);
+}
+
+function formatDate(ts) {
+	if (!ts || !ts.toDate) return 'N/A';
+	return ts.toDate().toLocaleString();
+}
+
+function escapeHtml(value) {
+	const div = document.createElement('div');
+	div.textContent = value || '';
+	return div.innerHTML;
+}
+</script>
+</body>
+</html>

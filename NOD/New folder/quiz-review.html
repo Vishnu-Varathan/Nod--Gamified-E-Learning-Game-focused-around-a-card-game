@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - Quiz Review</title>
+    <link href="https://fonts.googleapis.com/css2?family=Iceberg&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: #111;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img { height: 35px; }
+        .logo span { font-family: 'Iceberg', cursive; font-size: 20px; color: #48FF00; }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: #48FF00;
+            color: #48FF00;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: #151515;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-family: 'Iceberg', cursive;
+            font-size: 28px;
+            color: #48FF00;
+            margin-bottom: 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #48FF00;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .cards-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .card-mini {
+            width: 50px;
+            height: 70px;
+            background: #222;
+            border: 2px solid #48FF00;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #48FF00;
+            font-family: 'Iceberg', cursive;
+        }
+
+        /* Round Sections */
+        .round-section {
+            background: #151515;
+            border: 1px solid #222;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .round-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: #111;
+            border-bottom: 1px solid #222;
+        }
+
+        .round-title {
+            font-weight: 600;
+            color: #48FF00;
+            font-size: 18px;
+        }
+
+        .round-score {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .round-score span {
+            color: #48FF00;
+            font-weight: 600;
+        }
+
+        .questions-list {
+            padding: 20px;
+        }
+
+        /* Question Item */
+        .question-item {
+            background: #0d0d0d;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .question-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .question-number {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .question-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .question-status.correct {
+            background: rgba(72, 255, 0, 0.15);
+            color: #48FF00;
+        }
+
+        .question-status.incorrect {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff4444;
+        }
+
+        .question-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .review-hint {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #fbbf24;
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .review-hint-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .options-review {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-review {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: #151515;
+            border: 1px solid #222;
+            border-radius: 8px;
+            font-size: 14px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .option-review span:nth-child(2) {
+            flex: 1;
+            min-width: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .option-review.correct {
+            border-color: #48FF00;
+            background: rgba(72, 255, 0, 0.05);
+        }
+
+        .option-review.user-selected {
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.05);
+        }
+
+        .option-review.user-correct {
+            border-color: #48FF00;
+            background: rgba(72, 255, 0, 0.1);
+        }
+
+        .option-letter {
+            width: 26px;
+            height: 26px;
+            background: #222;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .option-review.correct .option-letter,
+        .option-review.user-correct .option-letter {
+            background: #48FF00;
+            color: #000;
+        }
+
+        .option-review.user-selected .option-letter {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .option-indicator {
+            margin-left: auto;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .option-indicator.correct {
+            color: #48FF00;
+        }
+
+        .option-indicator.wrong {
+            color: #ff4444;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #222;
+            border-top-color: #48FF00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .main-content { padding: 20px; }
+            .stats-row { gap: 20px; }
+            .stat-value { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="Untitled 1.png" alt="NOD Logo">
+            <span>NOD</span>
+        </div>
+        <a href="student-dashboard.html" class="back-btn" id="back-link">← Back</a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px; color: #888;">Loading quiz review...</p>
+        </div>
+
+        <!-- Content (hidden until loaded) -->
+        <div id="content" style="display: none;">
+            <!-- Summary -->
+            <div class="summary-section">
+                <h1 class="summary-title">Quiz Review</h1>
+                <p style="color:#888; margin-bottom:14px;" id="summary-meta">Loading session details...</p>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-correct">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-questions">0</div>
+                        <div class="stat-label">Total Questions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-rounds">0</div>
+                        <div class="stat-label">Total Rounds</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="hints-used">0</div>
+                        <div class="stat-label">Hints Used</div>
+                    </div>
+                </div>
+                <div class="cards-display" id="cards-display">
+                    <!-- Cards rendered here -->
+                </div>
+            </div>
+
+            <!-- Rounds -->
+            <div id="rounds-container">
+                <!-- Rounds rendered here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // Get URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session');
+        const playerNum = parseInt(urlParams.get('player')) || 1;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!sessionId) {
+                alert('Invalid session');
+                window.location.href = 'student-dashboard.html';
+                return;
+            }
+
+            // Wait for Firebase
+            const checkAuth = setInterval(async () => {
+                if (db) {
+                    clearInterval(checkAuth);
+                    await loadReview();
+                }
+            }, 100);
+        });
+
+        async function loadReview() {
+            try {
+                // Load session
+                const session = await getQuizSession(sessionId);
+                if (!session) {
+                    alert('Session not found');
+                    window.location.href = 'student-dashboard.html';
+                    return;
+                }
+
+                // Load quiz
+                const quiz = await getQuizById(session.quizId);
+                if (!quiz) {
+                    alert('Quiz not found');
+                    window.location.href = 'student-dashboard.html';
+                    return;
+                }
+
+                // Get player data
+                const playerData = playerNum === 1 ? session.players.player1 : session.players.player2;
+                const answers = playerData.answers || [];
+                const cards = playerData.cards || [];
+
+                // Calculate stats
+                const totalCorrect = answers.filter(a => a.correct).length;
+                const totalQuestions = answers.length;
+                const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+                const hintsUsed = answers.filter(a => a.hintUsed).length;
+
+                // Update summary
+                document.getElementById('total-correct').textContent = totalCorrect;
+                document.getElementById('total-questions').textContent = totalQuestions;
+                document.getElementById('accuracy').textContent = accuracy + '%';
+                document.getElementById('total-rounds').textContent = quiz.totalRounds || 0;
+                document.getElementById('hints-used').textContent = hintsUsed;
+                document.getElementById('summary-meta').textContent = `${quiz.title || 'Quiz'} • ${session.classroomName || 'No classroom'} • ${playerData.quizCompleted ? 'Completed' : 'In Progress'}`;
+
+                const backLink = document.getElementById('back-link');
+                if (session.classroomId) {
+                    backLink.href = `classroom.html?id=${session.classroomId}`;
+                    backLink.textContent = '← Back to Classroom';
+                } else {
+                    backLink.href = 'student-dashboard.html';
+                    backLink.textContent = '← Back to Dashboard';
+                }
+
+                // Render cards
+                document.getElementById('cards-display').innerHTML = cards.map(v => 
+                    `<div class="card-mini">${v}</div>`
+                ).join('');
+
+                // Render rounds
+                const roundsContainer = document.getElementById('rounds-container');
+                roundsContainer.innerHTML = quiz.rounds.map((round, roundIndex) => {
+                    const roundAnswers = answers.filter(a => a.roundIndex === roundIndex);
+                    const roundCorrect = roundAnswers.filter(a => a.correct).length;
+
+                    return `
+                        <div class="round-section">
+                            <div class="round-header">
+                                <span class="round-title">Round ${roundIndex + 1}</span>
+                                <span class="round-score">Score: <span>${roundCorrect}/5</span> (Card Value: ${cards[roundIndex] || 0})</span>
+                            </div>
+                            <div class="questions-list">
+                                ${round.questions.map((q, qIndex) => {
+                                    const answer = roundAnswers.find(a => a.questionIndex === qIndex);
+                                    const isCorrect = answer?.correct || false;
+                                    const userAnswer = answer?.answer;
+                                    const correctAnswer = q.correctAnswer;
+                                    const letters = ['A', 'B', 'C', 'D'];
+
+                                    return `
+                                        <div class="question-item">
+                                            <div class="question-header">
+                                                <span class="question-number">Question ${qIndex + 1}</span>
+                                                <span class="question-status ${isCorrect ? 'correct' : 'incorrect'}">
+                                                    ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                                                </span>
+                                            </div>
+                                            <div class="question-text">${escapeHtml(q.question)}</div>
+                                            <div class="review-hint" style="margin-bottom:10px; border-color:${answer?.hintUsed ? 'rgba(72,255,0,0.25)' : 'rgba(255,255,255,0.12)'}; color:${answer?.hintUsed ? '#86efac' : '#aaa'}; background:${answer?.hintUsed ? 'rgba(72,255,0,0.06)' : 'rgba(255,255,255,0.02)'};">
+                                                <div class="review-hint-label" style="color:${answer?.hintUsed ? '#48FF00' : '#777'}">Hint Usage</div>
+                                                ${answer?.hintUsed ? 'Hint used on this question' : 'Hint not used on this question'}
+                                            </div>
+                                            ${q.hint && q.hint.trim() ? `
+                                                <div class="review-hint">
+                                                    <div class="review-hint-label">💡 Hint</div>
+                                                    ${escapeHtml(q.hint)}
+                                                </div>
+                                            ` : ''}
+                                            <div class="options-review">
+                                                ${q.options.map((opt, optIndex) => {
+                                                    let classes = 'option-review';
+                                                    let indicator = '';
+                                                    
+                                                    if (optIndex === correctAnswer) {
+                                                        if (userAnswer === correctAnswer) {
+                                                            classes += ' user-correct';
+                                                            indicator = '<span class="option-indicator correct">✓ Your answer (correct)</span>';
+                                                        } else {
+                                                            classes += ' correct';
+                                                            indicator = '<span class="option-indicator correct">✓ Correct answer</span>';
+                                                        }
+                                                    } else if (optIndex === userAnswer && userAnswer !== correctAnswer) {
+                                                        classes += ' user-selected';
+                                                        indicator = '<span class="option-indicator wrong">✗ Your answer</span>';
+                                                    }
+
+                                                    return `
+                                                        <div class="${classes}">
+                                                            <span class="option-letter">${letters[optIndex]}</span>
+                                                            <span>${escapeHtml(opt)}</span>
+                                                            ${indicator}
+                                                        </div>
+                                                    `;
+                                                }).join('')}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Show content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading review:', error);
+                alert('Error loading quiz review');
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

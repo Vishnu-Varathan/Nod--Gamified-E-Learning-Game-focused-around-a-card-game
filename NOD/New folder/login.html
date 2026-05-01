@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .left-panel {
+            width: 42%;
+            background: linear-gradient(135deg, #e8ff00 0%, #8cff00 50%, #48ca38 100%);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo {
+            margin-bottom: 60px;
+            margin-left: 10px;
+        }
+
+        .logo img {
+            height: 133px;
+            width: auto;
+        }
+
+        .tagline {
+            font-family: 'Unbounded', 'Archivo Black', sans-serif;
+            font-size: 50px;
+            font-weight: 500;
+            color: #000000;
+            line-height: 1.3;
+            margin-bottom: 50px;
+        }
+
+        .feature {
+            margin-bottom: 35px;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .feature-icon.orange { background: #f97316; }
+        .feature-icon.pink { background: #ec4899; }
+        .feature-icon.purple { background: #8b5cf6; }
+
+        .feature-title {
+            color: #fbbf24;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+       
+        
+
+        .illustration {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            font-size: 120px;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: #fff;
+            padding: 40px 80px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 60px;
+        }
+
+        .top-nav span {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .top-nav a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .top-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+
+        .social-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 48px;
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #9ca3af;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .toggle-password-btn svg {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
+        .toggle-password-btn:hover {
+            color: #4b5563;
+        }
+
+        .forgot-link {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link a {
+            color: #6366f1;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px 20px;    
+            background: linear-gradient(135deg, #00e924 0%, #c3ff00 100%);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            display: block;
+        }
+
+        .message.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            display: block;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 900px) {
+            .left-panel {
+                display: none;
+            }
+            
+            .right-panel {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+            .right-panel {
+                padding: 25px 20px;
+            }
+            
+            .top-nav {
+                margin-bottom: 40px;
+            }
+            
+            h1 {
+                font-size: 26px;
+                margin-bottom: 25px;
+            }
+            
+            .form-container {
+                max-width: 100%;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            body {
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+            }
+            
+            .right-panel {
+                padding: 20px 16px;
+                justify-content: flex-start;
+            }
+            
+            .top-nav {
+                margin-bottom: 30px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+            }
+            
+            .top-nav span,
+            .top-nav a {
+                font-size: 13px;
+            }
+            
+            h1 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            
+            .social-btn {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            
+            .divider {
+                margin: 20px 0;
+            }
+            
+            .form-group {
+                margin-bottom: 14px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+            }
+            
+            .form-group input {
+                padding: 11px 14px;
+                font-size: 14px;
+            }
+            
+            .submit-btn {
+                padding: 12px 18px;
+                font-size: 15px;
+            }
+            
+            .forgot-link {
+                margin-bottom: 15px;
+            }
+            
+            .forgot-link a {
+                font-size: 13px;
+            }
+        }
+
+        /* Very small phones */
+        @media (max-width: 360px) {
+            .right-panel {
+                padding: 15px 12px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .social-btn {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+            
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .submit-btn {
+                padding: 11px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <div class="decoration-target"></div>
+        
+        <div class="logo"><img src="Untitled 1.png" alt="NOD Logo"></div>
+        
+        <div class="tagline">
+            Choose Us For <br>
+            interactive  learning
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon orange">🎯</div>
+            <div class="feature-title">Gamified Learning</div>
+            <div class="feature-desc">
+                Engage students with card-based battles and competitive quizzes.
+            </div>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon pink">📊</div>
+            <div class="feature-title">Track Progress</div>
+            <div class="feature-desc">
+                Monitor student performance with real-time analytics and leaderboards.
+            </div>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon purple">🏆</div>
+            <div class="feature-title">Compete & Learn</div>
+            <div class="feature-desc">
+                Students earn cards by answering correctly and battle to win more.
+            </div>
+        </div>
+        
+        <div class="illustration">🚀</div>
+    </div>
+
+    <div class="right-panel">
+        <div class="top-nav">
+            <span>Don't have an account?</span>
+            <a href="register.html">Sign up</a>
+        </div>
+        
+        <div class="form-container">
+            <h1>Welcome back</h1>
+            
+            <div id="message" class="message"></div>
+            
+            <button class="social-btn" id="googleBtn" onclick="signInWithGoogle()">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+            </button>
+            
+            <div class="divider">
+                <span>or</span>
+            </div>
+            
+            <form id="loginForm" onsubmit="signInWithEmail(event)">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password-btn" id="login-password-toggle" aria-label="Show password" title="Show password"></button>
+                    </div>
+                </div>
+                
+                <div class="forgot-link">
+                    <a href="#" onclick="resetPassword()">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span id="btnText">Sign in</span>
+                    <span>→</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            sendPasswordResetEmail,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc,
+            collection,
+            query,
+            where,
+            getDocs,
+            limit
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwvrwRoPNXptku6oSjqX8qV-38mWqBCqA",
+            authDomain: "capstone-project-nod-16ff9.firebaseapp.com",
+            projectId: "capstone-project-nod-16ff9",
+            storageBucket: "capstone-project-nod-16ff9.firebasestorage.app",
+            messagingSenderId: "244508008998",
+            appId: "1:244508008998:web:56abc30f10c23f5005bce7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.className = 'message ' + type;
+        }
+
+        function setLoading(loading) {
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            
+            if (loading) {
+                btn.disabled = true;
+                btnText.innerHTML = '<div class="spinner"></div>';
+            } else {
+                btn.disabled = false;
+                btnText.textContent = 'Sign in';
+            }
+        }
+
+        function getPasswordToggleIcon(showingPassword) {
+            if (showingPassword) {
+                return `
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M3 3L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10.58 10.58C10.21 10.95 10 11.46 10 12C10 13.1 10.9 14 12 14C12.54 14 13.05 13.79 13.42 13.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M9.88 5.09C10.57 5.03 11.28 5 12 5C16.48 5 20.27 7.94 21.54 12C20.98 13.78 19.97 15.35 18.66 16.58" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6.2 6.22C4.57 7.48 3.3 9.32 2.46 12C3.73 16.06 7.52 19 12 19C13.68 19 15.26 18.58 16.64 17.84" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+            }
+
+            return `
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M2.46 12C3.73 7.94 7.52 5 12 5C16.48 5 20.27 7.94 21.54 12C20.27 16.06 16.48 19 12 19C7.52 19 3.73 16.06 2.46 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            `;
+        }
+
+        function setupPasswordToggle(inputId, toggleId) {
+            const input = document.getElementById(inputId);
+            const toggle = document.getElementById(toggleId);
+            if (!input || !toggle) return;
+
+            toggle.innerHTML = getPasswordToggleIcon(false);
+
+            toggle.addEventListener('click', () => {
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                toggle.innerHTML = getPasswordToggleIcon(isHidden);
+                toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+                toggle.setAttribute('title', isHidden ? 'Hide password' : 'Show password');
+            });
+        }
+
+        setupPasswordToggle('password', 'login-password-toggle');
+
+        function isDeletedUser(userData) {
+            if (!userData) return false;
+            return userData.isDeleted === true || userData.status === 'deleted';
+        }
+
+        async function getUserProfileByUid(userId) {
+            let userData = null;
+
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (userDoc.exists()) {
+                userData = userDoc.data();
+            } else {
+                const usersRef = collection(db, "users");
+                const byUid = await getDocs(query(usersRef, where("uid", "==", userId), limit(1)));
+                if (!byUid.empty) {
+                    userData = byUid.docs[0].data();
+                }
+            }
+
+            return userData;
+        }
+
+        async function redirectBasedOnRole(userId, preloadedUserData = null) {
+            // Check user role in Firestore
+            try {
+                const userData = preloadedUserData || await getUserProfileByUid(userId);
+
+                if (isDeletedUser(userData)) {
+                    await signOut(auth);
+                    showMessage('This account was deleted by an admin and can no longer sign in.', 'error');
+                    return;
+                }
+
+                if (userData) {
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else if (userData.role === 'teacher') {
+                        window.location.href = 'teacher-dashboard.html';
+                    } else {
+                        window.location.href = 'student-dashboard.html';
+                    }
+                } else {
+                    await signOut(auth);
+                    showMessage('This account is no longer active. Please contact an admin.', 'error');
+                }
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                window.location.href = 'student-dashboard.html';
+            }
+        }
+
+        window.signInWithEmail = async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            setLoading(true);
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userData = await getUserProfileByUid(userCredential.user.uid);
+
+                if (isDeletedUser(userData)) {
+                    await signOut(auth);
+                    showMessage('This account was deleted by an admin and can no longer sign in.', 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                showMessage('Signed in successfully! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    redirectBasedOnRole(userCredential.user.uid, userData);
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                let errorMessage = 'An error occurred. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                    case 'auth/invalid-credential':
+                        errorMessage = 'Invalid email or password.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many attempts. Please try again later.';
+                        break;
+                }
+                
+                showMessage(errorMessage, 'error');
+                setLoading(false);
+            }
+        };
+
+        window.signInWithGoogle = async function() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const userData = await getUserProfileByUid(result.user.uid);
+
+                if (isDeletedUser(userData)) {
+                    await signOut(auth);
+                    showMessage('This account was deleted by an admin and can no longer sign in.', 'error');
+                    return;
+                }
+
+                showMessage('Signed in successfully! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    redirectBasedOnRole(result.user.uid, userData);
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Google sign-in failed. Please try again.', 'error');
+            }
+        };
+
+        window.resetPassword = async function() {
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email) {
+                showMessage('Please enter your email first.', 'error');
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showMessage('Password reset email sent! Check your inbox.', 'success');
+            } catch (error) {
+                showMessage('Could not send reset email. Check the email address.', 'error');
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('deleted') === '1') {
+            showMessage('This account was deleted by an admin and can no longer sign in.', 'error');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - My Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Iceberg&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            min-height: 100vh;
+            background: #0a0a0a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+        .logo img { height: 50px; }
+        .logo span { font-family: 'Iceberg', cursive; font-size: 28px; color: #48FF00; }
+        h1 { font-family: 'Iceberg', cursive; font-size: 3rem; color: #48FF00; margin-bottom: 20px; }
+        p { color: #888; font-size: 1.1rem; margin-bottom: 30px; }
+        .back-btn {
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid #48FF00;
+            color: #48FF00;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: #48FF00; color: #000; }
+        @media (max-width: 900px) {
+            body { padding: 24px 16px; }
+            .logo { margin-bottom: 28px; }
+            h1 { font-size: 2.5rem; text-align: center; }
+            p { text-align: center; }
+        }
+        @media (max-width: 768px) {
+            .logo img { height: 44px; }
+            .logo span { font-size: 26px; }
+            h1 { font-size: 2.1rem; }
+            p { font-size: 1rem; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 20px 12px; }
+            .logo { gap: 10px; margin-bottom: 20px; }
+            .logo img { height: 38px; }
+            .logo span { font-size: 24px; }
+            h1 { font-size: 1.8rem; margin-bottom: 12px; }
+            p { font-size: 0.95rem; margin-bottom: 22px; }
+            .back-btn { width: 100%; text-align: center; padding: 12px 16px; }
+        }
+        @media (max-width: 360px) {
+            h1 { font-size: 1.55rem; }
+            p { font-size: 0.88rem; }
+            .back-btn { font-size: 0.92rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="Untitled 1.png" alt="NOD Logo">
+        <span>NOD</span>
+    </div>
+    <h1>My Dashboard</h1>
+    <p>Your personal dashboard - Coming soon</p>
+    <a href="index.html" class="back-btn">← Back to Game</a>
+</body>
+</html>

@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isTeacher(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isClassMember(classroomId) {
+      return signedIn() && exists(/databases/$(database)/documents/classroomMembers/$(request.auth.uid + '_' + classroomId));
+    }
+
+    function isClassTeacher(classroomId) {
+      return signedIn() && get(/databases/$(database)/documents/classrooms/$(classroomId)).data.teacherUid == request.auth.uid;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if signedIn() && request.auth.uid == userId && request.resource.data.role in ['student', 'teacher'];
+      allow update: if signedIn() && (
+        (request.auth.uid == userId && request.resource.data.role == resource.data.role) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /userEmailIndex/{emailKey} {
+      allow read: if signedIn();
+      allow create: if signedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        !exists(/databases/$(database)/documents/userEmailIndex/$(emailKey));
+      allow update: if signedIn() && (
+        (resource.data.uid == request.auth.uid && request.resource.data.uid == request.auth.uid) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /userDisplayNameIndex/{displayNameKey} {
+      allow read: if signedIn();
+      allow create: if signedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        !exists(/databases/$(database)/documents/userDisplayNameIndex/$(displayNameKey));
+      allow update: if signedIn() && (
+        (resource.data.uid == request.auth.uid && request.resource.data.uid == request.auth.uid) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /classrooms/{classroomId} {
+      allow read: if signedIn() && (
+        isAdmin() ||
+        resource.data.teacherUid == request.auth.uid ||
+        exists(/databases/$(database)/documents/classroomMembers/$(request.auth.uid + '_' + classroomId))
+      );
+      allow create: if signedIn() && request.resource.data.teacherUid == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.teacherUid == request.auth.uid;
+    }
+
+    match /classroomMembers/{memberId} {
+      allow read: if signedIn() && (
+        request.auth.uid == resource.data.uid ||
+        isClassTeacher(resource.data.classroomId)
+      );
+      allow create: if signedIn() && (
+        request.auth.uid == request.resource.data.uid ||
+        isClassTeacher(request.resource.data.classroomId)
+      );
+      allow delete: if signedIn() && (
+        request.auth.uid == resource.data.uid ||
+        isClassTeacher(resource.data.classroomId)
+      );
+    }
+
+    match /quizzes/{quizId} {
+      allow read: if signedIn() && (
+        isAdmin() ||
+        resource.data.classroomId == null ||
+        isClassMember(resource.data.classroomId) ||
+        resource.data.teacherUid == request.auth.uid
+      );
+      allow create: if signedIn() && request.auth.uid == request.resource.data.teacherUid;
+      allow update, delete: if signedIn() && request.auth.uid == resource.data.teacherUid;
+    }
+
+    match /quizSessions/{sessionId} {
+      allow read, write: if signedIn() && (
+        resource.data.players.player1.uid == request.auth.uid ||
+        resource.data.players.player2.uid == request.auth.uid
+      );
+    }
+
+    match /games/{gameId} {
+      allow read, write: if signedIn();
+    }
+
+    match /leaderboard/{entryId} {
+      allow read: if true;
+      allow write: if signedIn();
+    }
+  }
+}

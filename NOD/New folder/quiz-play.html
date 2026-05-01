@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - Quiz Battle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Iceberg&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: #111;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img { height: 35px; }
+        .logo span { font-family: 'Iceberg', cursive; font-size: 20px; color: #48FF00; }
+
+        .quiz-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .quiz-title-header {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .player-badge {
+            background: linear-gradient(135deg, #48FF00, #00c853);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .player-badge.player2 {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #fff;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #111;
+            padding: 15px 30px;
+            border-bottom: 1px solid #222;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #48FF00, #00c853);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Screen States */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Transition Screen */
+        .transition-screen {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .transition-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+
+        .transition-title {
+            font-family: 'Iceberg', cursive;
+            font-size: 36px;
+            color: #48FF00;
+            margin-bottom: 15px;
+        }
+
+        .transition-desc {
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .transition-player {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .transition-btn {
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #48FF00, #00c853);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .transition-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(72, 255, 0, 0.3);
+        }
+
+        .transition-btn.orange {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #fff;
+        }
+
+        /* Question Screen */
+        .round-indicator {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .round-badge {
+            display: inline-block;
+            background: #222;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 20px;
+            color: #48FF00;
+        }
+
+        .question-card {
+            background: #151515;
+            border: 1px solid #00ff04;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .question-number {
+            font-size: 20px;
+            color: #48FF00;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 27px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 20px;
+            background: #0d0d0d;
+            border: 2px solid #222;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 19px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .option-btn span:last-child {
+            flex: 1;
+            min-width: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .option-btn:hover {
+            border-color: #48FF00;
+            background: rgba(72, 255, 0, 0.05);
+        }
+
+        .option-btn.selected {
+            border-color: #48FF00;
+            background: rgba(72, 255, 0, 0.1);
+        }
+
+        .option-btn.correct {
+            border-color: #48FF00;
+            background: rgba(72, 255, 0, 0.15);
+        }
+
+        .option-btn.incorrect {
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.15);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            background: #222;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .option-btn.selected .option-letter,
+        .option-btn.correct .option-letter {
+            background: #48FF00;
+            color: #000;
+        }
+
+        .option-btn.incorrect .option-letter {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        /* Hint System */
+        .hint-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hint-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            color: #f59e0b;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .hint-btn:hover:not(:disabled) {
+            background: rgba(245, 158, 11, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .hint-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #555;
+        }
+
+        .hint-btn .hint-icon {
+            font-size: 18px;
+        }
+
+        .hint-chances {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .hint-chances .hint-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+            border: 1px solid #555;
+            transition: all 0.3s;
+        }
+
+        .hint-chances .hint-dot.used {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+        }
+
+        .hint-display {
+            display: none;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            animation: hintReveal 0.4s ease;
+        }
+
+        .hint-display.visible {
+            display: block;
+        }
+
+        .hint-display-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .hint-display-text {
+            font-size: 15px;
+            color: #fbbf24;
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        @keyframes hintReveal {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Question Navigation */
+        .question-nav {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .next-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #48FF00, #00c853);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .next-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(72, 255, 0, 0.3);
+        }
+
+        /* Round Complete Screen */
+        .round-complete {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .card-earned {
+            margin: 40px 0;
+        }
+
+        .card-display {
+            width: 150px;
+            height: 200px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #222, #111);
+            border: 3px solid #48FF00;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(72, 255, 0, 0.2);
+        }
+
+        .card-value-display {
+            font-size: 72px;
+            font-weight: 700;
+            color: #48FF00;
+            font-family: 'Iceberg', cursive;
+        }
+
+        .card-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #48FF00;
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .score-breakdown {
+            background: #151515;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            display: inline-block;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            font-size: 16px;
+        }
+
+        .score-row span:last-child {
+            color: #48FF00;
+            font-weight: 600;
+        }
+
+        /* Quiz Complete Screen */
+        .quiz-complete {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .cards-earned-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .mini-card {
+            width: 70px;
+            height: 95px;
+            background: linear-gradient(135deg, #222, #111);
+            border: 2px solid #48FF00;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: #48FF00;
+            font-family: 'Iceberg', cursive;
+        }
+
+        /* Waiting for Player 2 */
+        .waiting-screen {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .waiting-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #222;
+            border-top-color: #48FF00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Both Complete - Start Game */
+        .ready-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .vs-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .player-summary {
+            text-align: center;
+        }
+
+        .player-summary-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .player-summary-cards {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .summary-card {
+            width: 50px;
+            height: 70px;
+            background: #222;
+            border: 2px solid #48FF00;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: #48FF00;
+        }
+
+        .vs-text {
+            font-size: 36px;
+            font-weight: 700;
+            color: #48FF00;
+            font-family: 'Iceberg', cursive;
+        }
+
+        .start-game-btn {
+            padding: 20px 60px;
+            background: linear-gradient(135deg, #48FF00, #00c853);
+            border: none;
+            border-radius: 15px;
+            color: #000;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .start-game-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(72, 255, 0, 0.4);
+        }
+
+        /* Loading */
+        .loading-screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+        }
+
+        .loading-screen .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #222;
+            border-top-color: #48FF00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .question-card { padding: 30px; }
+            .question-text { font-size: 22px; }
+            .option-btn { font-size: 16px; }
+        }
+
+        @media (max-width: 600px) {
+            .question-card { padding: 20px; }
+            .question-text { font-size: 18px; }
+            .option-btn { padding: 14px 15px; font-size: 14px; gap: 10px; }
+            .option-letter { width: 28px; height: 28px; font-size: 12px; }
+            .vs-container { flex-direction: column; gap: 20px; }
+            .header { flex-wrap: wrap; gap: 10px; }
+            .main-content { padding: 20px 12px; }
+            .round-badge { font-size: 16px; padding: 8px 18px; }
+            .hint-section { flex-direction: column; align-items: stretch; }
+            .hint-btn { justify-content: center; }
+            .hint-chances { justify-content: center; }
+        }
+
+        @media (max-width: 400px) {
+            .question-card { padding: 15px; }
+            .question-text { font-size: 16px; }
+            .option-btn { padding: 12px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio -->
+    <audio id="hint-sound" src="cardselection.mp3" preload="auto"></audio>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="Untitled 1.png" alt="NOD Logo">
+            <span>NOD</span>
+        </div>
+        <div class="quiz-info">
+            <span class="quiz-title-header" id="quiz-title-header">Loading...</span>
+            <span class="player-badge" id="current-player-badge">Player 1</span>
+        </div>
+    </header>
+
+    <!-- Progress Bar -->
+    <div class="progress-container" id="progress-container">
+        <div class="progress-info">
+            <span id="progress-text">Round 1 • Question 1/5</span>
+            <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading Screen -->
+        <div class="screen loading-screen active" id="loading-screen">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px; color: #888;">Loading quiz...</p>
+        </div>
+
+        <!-- Player 1 Start Screen -->
+        <div class="screen transition-screen" id="p1-start-screen">
+            <div class="transition-icon">🎯</div>
+            <h1 class="transition-title">Quiz Battle</h1>
+            <p class="transition-desc">Answer questions to earn your battle cards!</p>
+            <div class="transition-player">
+                <span style="color: #48FF00;" id="p1-name-display">Player 1</span>, you're up first!
+            </div>
+            <button class="transition-btn" id="start-p1-btn">Start Quiz</button>
+        </div>
+
+        <!-- Question Screen -->
+        <div class="screen" id="question-screen">
+            <div class="round-indicator">
+                <span class="round-badge" id="round-badge">Round 1 of 3</span>
+            </div>
+            <div class="question-card">
+                <div class="question-number" id="question-number">Question 1 of 5</div>
+                <div class="hint-section">
+                    <button class="hint-btn" id="hint-btn" onclick="useHint()">
+                        <span class="hint-icon">💡</span> Use Hint
+                    </button>
+                    <div class="hint-chances" id="hint-chances">
+                        <span>Hints:</span>
+                        <span class="hint-dot" id="hint-dot-1"></span>
+                        <span class="hint-dot" id="hint-dot-2"></span>
+                        <span class="hint-dot" id="hint-dot-3"></span>
+                        <span id="hint-count-text">0/3 used</span>
+                    </div>
+                </div>
+                <div class="hint-display" id="hint-display">
+                    <div class="hint-display-label">💡 Hint</div>
+                    <div class="hint-display-text" id="hint-display-text"></div>
+                </div>
+                <div class="question-text" id="question-text">Loading question...</div>
+                <div class="options-list" id="options-list">
+                    <!-- Options rendered here -->
+                </div>
+            </div>
+            <div class="question-nav">
+                <button class="next-btn" id="next-btn" disabled>Next Question</button>
+            </div>
+        </div>
+
+        <!-- Round Complete Screen -->
+        <div class="screen round-complete" id="round-complete-screen">
+            <h1 class="transition-title">Round Complete!</h1>
+            <div class="card-earned">
+                <div class="card-display">
+                    <span class="card-value-display" id="earned-card-value">3</span>
+                    <span class="card-label">CARD EARNED</span>
+                </div>
+            </div>
+            <div class="score-breakdown">
+                <div class="score-row">
+                    <span>Correct Answers:</span>
+                    <span id="round-correct">3/5</span>
+                </div>
+            </div>
+            <p style="color: #888; margin-bottom: 30px;">Your card value equals your correct answers!</p>
+            <button class="transition-btn" id="next-round-btn">Next Round</button>
+        </div>
+
+        <!-- Player Quiz Complete Screen -->
+        <div class="screen quiz-complete" id="quiz-complete-screen">
+            <div class="transition-icon">🎉</div>
+            <h1 class="transition-title">Quiz Complete!</h1>
+            <p class="transition-desc" id="complete-player-name">Player 1, here are your battle cards:</p>
+            <div class="cards-earned-grid" id="cards-earned-grid">
+                <!-- Cards rendered here -->
+            </div>
+            <button class="transition-btn" id="quiz-done-btn">Continue</button>
+        </div>
+
+        <!-- Waiting for Player 2 -->
+        <div class="screen waiting-screen" id="waiting-screen">
+            <div class="transition-icon">⏳</div>
+            <h1 class="transition-title">Pass Device to Player 2</h1>
+            <p class="transition-desc">Hand the device to <span id="waiting-p2-name">Player 2</span></p>
+            <div class="waiting-spinner"></div>
+            <button class="transition-btn orange" id="ready-p2-btn">I'm Player 2 - Ready!</button>
+        </div>
+
+        <!-- Both Complete - Start Game -->
+        <div class="screen ready-screen" id="ready-screen">
+            <div class="transition-icon">⚔️</div>
+            <h1 class="transition-title">Ready for Battle!</h1>
+            <p class="transition-desc">Both players have their cards. Time to battle!</p>
+            
+            <div class="vs-container">
+                <div class="player-summary">
+                    <div class="player-summary-name" id="final-p1-name">Player 1</div>
+                    <div class="player-summary-cards" id="final-p1-cards"></div>
+                </div>
+                <div class="vs-text">VS</div>
+                <div class="player-summary">
+                    <div class="player-summary-name" id="final-p2-name">Player 2</div>
+                    <div class="player-summary-cards" id="final-p2-cards"></div>
+                </div>
+            </div>
+
+            <button class="start-game-btn" id="start-battle-btn">START BATTLE!</button>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // State
+        let quiz = null;
+        let session = null;
+        let currentPlayerNum = 1;
+        let currentRoundIndex = 0;
+        let currentQuestionIndex = 0;
+        let selectedAnswer = null;
+        let playerAnswers = []; // All answers for current player
+        let roundCorrect = 0;
+        let playerCards = []; // Cards earned
+
+        // Hint system state
+        let hintsUsed = 0; // Total hints used this quiz (max 3)
+        const MAX_HINTS = 3;
+        let currentQuestionHintRevealed = false; // Whether current question's hint is showing
+
+        // Get URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session');
+        const quizId = urlParams.get('quiz');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!sessionId || !quizId) {
+                alert('Invalid quiz session');
+                window.location.href = 'student-dashboard.html';
+                return;
+            }
+
+            // Wait for Firebase
+            const checkAuth = setInterval(async () => {
+                if (auth && db) {
+                    clearInterval(checkAuth);
+                    await loadQuizData();
+                }
+            }, 100);
+
+            // Event listeners
+            document.getElementById('start-p1-btn').addEventListener('click', startPlayerQuiz);
+            document.getElementById('next-btn').addEventListener('click', nextQuestion);
+            document.getElementById('next-round-btn').addEventListener('click', nextRound);
+            document.getElementById('quiz-done-btn').addEventListener('click', playerQuizDone);
+            document.getElementById('ready-p2-btn').addEventListener('click', startPlayer2Quiz);
+            document.getElementById('start-battle-btn').addEventListener('click', startBattle);
+        });
+
+        async function loadQuizData() {
+            try {
+                // Load quiz
+                quiz = await getQuizById(quizId);
+                if (!quiz) {
+                    alert('Quiz not found');
+                    window.location.href = 'student-dashboard.html';
+                    return;
+                }
+
+                // Load session
+                session = await getQuizSession(sessionId);
+                if (!session) {
+                    alert('Session not found');
+                    window.location.href = 'student-dashboard.html';
+                    return;
+                }
+
+                // Update header
+                document.getElementById('quiz-title-header').textContent = quiz.title;
+
+                // Determine current state
+                if (session.players.player1.quizCompleted && session.players.player2.quizCompleted) {
+                    // Both done - show battle screen
+                    showReadyScreen();
+                } else if (session.players.player1.quizCompleted) {
+                    // Player 1 done, waiting for player 2
+                    currentPlayerNum = 2;
+                    showWaitingScreen();
+                } else {
+                    // Player 1 needs to take quiz
+                    currentPlayerNum = 1;
+                    showScreen('p1-start-screen');
+                    document.getElementById('p1-name-display').textContent = session.players.player1.name;
+                }
+
+            } catch (error) {
+                console.error('Error loading quiz:', error);
+                alert('Error loading quiz data');
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update player badge
+            const badge = document.getElementById('current-player-badge');
+            const playerName = currentPlayerNum === 1 ? session.players.player1.name : session.players.player2.name;
+            badge.textContent = playerName;
+            badge.className = 'player-badge' + (currentPlayerNum === 2 ? ' player2' : '');
+        }
+
+        function startPlayerQuiz() {
+            // Reset state for this player
+            playerAnswers = [];
+            playerCards = [];
+            currentRoundIndex = 0;
+            currentQuestionIndex = 0;
+            roundCorrect = 0;
+
+            // Reset hint state for this player
+            hintsUsed = 0;
+            currentQuestionHintRevealed = false;
+            updateHintUI();
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            showScreen('question-screen');
+            
+            const round = quiz.rounds[currentRoundIndex];
+            const question = round.questions[currentQuestionIndex];
+
+            // Update progress
+            const totalQuestions = quiz.totalRounds * 5;
+            const currentQ = currentRoundIndex * 5 + currentQuestionIndex + 1;
+            const percent = Math.round((currentQ / totalQuestions) * 100);
+            
+            document.getElementById('progress-text').textContent = 
+                `Round ${currentRoundIndex + 1} • Question ${currentQuestionIndex + 1}/5`;
+            document.getElementById('progress-percent').textContent = percent + '%';
+            document.getElementById('progress-fill').style.width = percent + '%';
+
+            // Update question
+            document.getElementById('round-badge').textContent = 
+                `Round ${currentRoundIndex + 1} of ${quiz.totalRounds}`;
+            document.getElementById('question-number').textContent = 
+                `Question ${currentQuestionIndex + 1} of 5`;
+            document.getElementById('question-text').textContent = question.question;
+
+            // Render options
+            const letters = ['A', 'B', 'C', 'D'];
+            const optionsList = document.getElementById('options-list');
+            optionsList.innerHTML = question.options.map((opt, idx) => `
+                <button class="option-btn" data-index="${idx}" onclick="selectOption(${idx})">
+                    <span class="option-letter">${letters[idx]}</span>
+                    <span>${escapeHtml(opt)}</span>
+                </button>
+            `).join('');
+
+            // Reset hint display for this question
+            currentQuestionHintRevealed = false;
+            const hintDisplay = document.getElementById('hint-display');
+            hintDisplay.classList.remove('visible');
+            document.getElementById('hint-display-text').textContent = '';
+
+            // Update hint button state
+            const hintBtn = document.getElementById('hint-btn');
+            const questionHint = question.hint ? question.hint.trim() : '';
+            if (hintsUsed >= MAX_HINTS || !questionHint) {
+                hintBtn.disabled = true;
+            } else {
+                hintBtn.disabled = false;
+            }
+            // Hide hint button entirely if no hint was set for this question
+            hintBtn.style.display = questionHint ? 'flex' : 'none';
+
+            updateHintUI();
+
+            // Reset state
+            selectedAnswer = null;
+            document.getElementById('next-btn').disabled = true;
+        }
+
+        function useHint() {
+            if (hintsUsed >= MAX_HINTS || currentQuestionHintRevealed) return;
+
+            const round = quiz.rounds[currentRoundIndex];
+            const question = round.questions[currentQuestionIndex];
+            const questionHint = question.hint ? question.hint.trim() : '';
+            if (!questionHint) return;
+
+            // Play sound
+            const hintSound = document.getElementById('hint-sound');
+            if (hintSound) {
+                hintSound.currentTime = 0;
+                hintSound.play().catch(err => console.log('Sound blocked:', err));
+            }
+
+            // Reveal hint
+            currentQuestionHintRevealed = true;
+            hintsUsed++;
+
+            document.getElementById('hint-display-text').textContent = questionHint;
+            document.getElementById('hint-display').classList.add('visible');
+
+            // Disable button after use
+            document.getElementById('hint-btn').disabled = true;
+
+            updateHintUI();
+
+            // Save hint usage to Firebase in background
+            saveHintUsage();
+        }
+
+        function updateHintUI() {
+            // Update dots
+            for (let i = 1; i <= MAX_HINTS; i++) {
+                const dot = document.getElementById(`hint-dot-${i}`);
+                if (dot) {
+                    dot.classList.toggle('used', i <= hintsUsed);
+                }
+            }
+            // Update counter text
+            const countText = document.getElementById('hint-count-text');
+            if (countText) {
+                countText.textContent = `${hintsUsed}/${MAX_HINTS} used`;
+            }
+        }
+
+        async function saveHintUsage() {
+            try {
+                await updateQuizSessionHintUsage(sessionId, currentPlayerNum, hintsUsed);
+            } catch (err) {
+                console.warn('Could not save hint usage:', err);
+            }
+        }
+
+        function selectOption(index) {
+            selectedAnswer = index;
+            
+            // Update UI
+            document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+                btn.classList.remove('selected');
+                if (idx === index) btn.classList.add('selected');
+            });
+
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            // Record answer
+            const round = quiz.rounds[currentRoundIndex];
+            const question = round.questions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === question.correctAnswer;
+
+            playerAnswers.push({
+                roundIndex: currentRoundIndex,
+                questionIndex: currentQuestionIndex,
+                answer: selectedAnswer,
+                correct: isCorrect,
+                correctAnswer: question.correctAnswer,
+                hintUsed: currentQuestionHintRevealed
+            });
+
+            if (isCorrect) roundCorrect++;
+
+            // Show correct/incorrect briefly
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, idx) => {
+                if (idx === question.correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (idx === selectedAnswer && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+
+                if (currentQuestionIndex >= 5) {
+                    // Round complete
+                    showRoundComplete();
+                } else {
+                    showQuestion();
+                }
+            }, 800);
+        }
+
+        function showRoundComplete() {
+            // Card value = correct answers (1-5, minimum 1)
+            const cardValue = Math.max(1, roundCorrect);
+            playerCards.push(cardValue);
+
+            document.getElementById('earned-card-value').textContent = cardValue;
+            document.getElementById('round-correct').textContent = `${roundCorrect}/5`;
+
+            // Update button text
+            const isLastRound = currentRoundIndex >= quiz.totalRounds - 1;
+            document.getElementById('next-round-btn').textContent = 
+                isLastRound ? 'See Results' : 'Next Round';
+
+            showScreen('round-complete-screen');
+        }
+
+        function nextRound() {
+            currentRoundIndex++;
+            roundCorrect = 0;
+
+            if (currentRoundIndex >= quiz.totalRounds) {
+                // Quiz complete for this player
+                showPlayerComplete();
+            } else {
+                currentQuestionIndex = 0;
+                showQuestion();
+            }
+        }
+
+        function showPlayerComplete() {
+            const playerName = currentPlayerNum === 1 ? session.players.player1.name : session.players.player2.name;
+            document.getElementById('complete-player-name').textContent = 
+                `${playerName}, here are your battle cards:`;
+
+            // Render cards
+            const cardsGrid = document.getElementById('cards-earned-grid');
+            cardsGrid.innerHTML = playerCards.map(val => `
+                <div class="mini-card">${val}</div>
+            `).join('');
+
+            showScreen('quiz-complete-screen');
+        }
+
+        async function playerQuizDone() {
+            // Calculate total score
+            const totalCorrect = playerAnswers.filter(a => a.correct).length;
+
+            // Save to Firebase
+            try {
+                await updateQuizSessionPlayer(
+                    sessionId,
+                    currentPlayerNum,
+                    playerAnswers,
+                    playerCards,
+                    totalCorrect
+                );
+
+                if (currentPlayerNum === 1) {
+                    // Update session status
+                    await updateQuizSessionStatus(sessionId, 'player2_quiz');
+                    showWaitingScreen();
+                } else {
+                    // Both players done
+                    await updateQuizSessionStatus(sessionId, 'ready_for_game');
+                    
+                    // Reload session to get player 1's cards
+                    session = await getQuizSession(sessionId);
+                    showReadyScreen();
+                }
+            } catch (error) {
+                console.error('Error saving quiz results:', error);
+                alert('Error saving results. Please try again.');
+            }
+        }
+
+        function showWaitingScreen() {
+            document.getElementById('waiting-p2-name').textContent = session.players.player2.name;
+            showScreen('waiting-screen');
+        }
+
+        function startPlayer2Quiz() {
+            currentPlayerNum = 2;
+            const badge = document.getElementById('current-player-badge');
+            badge.textContent = session.players.player2.name;
+            badge.classList.add('player2');
+            
+            startPlayerQuiz();
+        }
+
+        function showReadyScreen() {
+            // Skip card display - go straight to battle
+            startBattle();
+        }
+
+        function showReadyScreenWithCards() {
+            // Reload session for latest data
+            getQuizSession(sessionId).then(updatedSession => {
+                session = updatedSession;
+                
+                document.getElementById('final-p1-name').textContent = session.players.player1.name;
+                document.getElementById('final-p2-name').textContent = session.players.player2.name;
+
+                // Render cards
+                document.getElementById('final-p1-cards').innerHTML = 
+                    session.players.player1.cards.map(v => `<div class="summary-card">${v}</div>`).join('');
+                document.getElementById('final-p2-cards').innerHTML = 
+                    session.players.player2.cards.map(v => `<div class="summary-card">${v}</div>`).join('');
+
+                showScreen('ready-screen');
+            });
+        }
+
+        function startBattle() {
+            // Redirect to game with quiz session data
+            const p1Cards = encodeURIComponent(JSON.stringify(session.players.player1.cards));
+            const p2Cards = encodeURIComponent(JSON.stringify(session.players.player2.cards));
+            
+            window.location.href = `index.html?mode=quiz&session=${sessionId}&p1name=${encodeURIComponent(session.players.player1.name)}&p2name=${encodeURIComponent(session.players.player2.name)}&p1uid=${session.players.player1.uid}&p2uid=${session.players.player2.uid}&p1cards=${p1Cards}&p2cards=${p2Cards}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Iceberg&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(255,193,7,.08), transparent 36%),
+                radial-gradient(circle at 90% 0%, rgba(45,212,191,.14), transparent 42%),
+                #0b0f14;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 22px;
+            background: rgba(10,12,16,.95);
+            border-bottom: 1px solid #1f2a36;
+            backdrop-filter: blur(8px);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo img { height: 36px; }
+        .logo span { font-family: 'Iceberg', cursive; font-size: 24px; color: #ffd166; }
+        .header-right { display: flex; gap: 10px; align-items: center; }
+        .chip {
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid #2b3746;
+            color: #a6b4c5;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+        .btn {
+            border: 1px solid #2b3746;
+            background: #121923;
+            color: #d5deea;
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all .2s ease;
+        }
+        .btn:active { transform: translateY(1px); }
+        .btn.loading {
+            opacity: .75;
+            cursor: wait;
+            position: relative;
+        }
+        .btn.loading::after {
+            content: '...';
+            margin-left: 6px;
+            letter-spacing: 2px;
+        }
+        .btn:hover { border-color: #48FF00; color: #48FF00; }
+        .btn-primary {
+            border: none;
+            color: #021102;
+            background: linear-gradient(135deg, #48FF00, #00c853);
+            box-shadow: 0 8px 20px rgba(72,255,0,.24);
+        }
+        .btn-danger {
+            border-color: #5a2020;
+            background: #251112;
+            color: #ff9595;
+        }
+        .btn-danger:hover { border-color: #d34b4b; color: #ffb5b5; }
+        .wrap { max-width: 1320px; margin: 0 auto; padding: 22px; }
+        .title { font-family: 'Iceberg', cursive; font-size: 38px; color: #48FF00; }
+        .subtitle { color: #90a1b6; margin-top: 8px; margin-bottom: 18px; }
+        .alert {
+            display: none;
+            margin: 14px 0;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            font-size: 14px;
+        }
+        .alert.ok { display: block; background: #0f2a20; border-color: #1e7d56; color: #9ff0ca; }
+        .alert.error { display: block; background: #2b1313; border-color: #8b2d2d; color: #ffb1b1; }
+        .admin-layout {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .sidebar {
+            width: 380px;
+            border: 1px solid #1e2938;
+            background: linear-gradient(180deg, rgba(17,17,17,.96), rgba(13,13,13,.96));
+            border-radius: 14px;
+            padding: 14px;
+            position: sticky;
+            top: 84px;
+        }
+        .sidebar-builder {
+            margin-top: 14px;
+            background: linear-gradient(180deg, #131a24, #0f141d);
+            border: 1px solid #1e2938;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .sidebar-builder .options-grid {
+            grid-template-columns: 1fr;
+        }
+        .sidebar-builder .question-box {
+            margin-bottom: 8px;
+        }
+        .sidebar-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .menu-btn {
+            width: 100%;
+            text-align: left;
+            padding: 11px 12px;
+            border: 1px solid #273444;
+            background: #121923;
+            color: #cbd5e1;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            font-weight: 600;
+            transition: all .2s ease;
+        }
+        .menu-btn:hover { border-color: #48FF00; color: #48FF00; }
+        .class-list {
+            max-height: 70vh;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 3px;
+        }
+        .class-list.collapsed { display: none; }
+        .class-link {
+            padding: 10px;
+            background: #0a0f17;
+            border: 1px solid #243244;
+            border-radius: 10px;
+        }
+        .quiz-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #dbeafe;
+            margin-bottom: 4px;
+        }
+        .quiz-item-meta {
+            font-size: 12px;
+            color: #9fb0c5;
+            margin-bottom: 8px;
+        }
+        .quiz-item-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-mini {
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+        .main-pane {
+            flex: 1;
+            min-width: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 16px;
+            margin-top: 14px;
+        }
+        .card {
+            background: linear-gradient(180deg, #131a24, #0f141d);
+            border: 1px solid #1e2938;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 14px 28px rgba(0,0,0,.24);
+        }
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .muted { color: #90a1b6; font-size: 13px; line-height: 1.4; }
+        .row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .field { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+        .field label { color: #9fb0c5; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; }
+        .field input, .field select {
+            padding: 11px 12px;
+            border-radius: 10px;
+            border: 1px solid #1f4f2b;
+            background: #08110b;
+            color: #fff;
+            font-size: 14px;
+            box-shadow: inset 0 0 0 1px rgba(72,255,0,.08);
+            transition: all .2s ease;
+        }
+        .field input:focus, .field select:focus {
+            outline: none;
+            border-color: #48FF00;
+            box-shadow: 0 0 0 2px rgba(72,255,0,.18), 0 0 14px rgba(72,255,0,.2);
+        }
+        .result-list { margin-top: 12px; display: grid; gap: 8px; }
+        .result-item {
+            border: 1px solid #273444;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+        .result-item:hover, .result-item.active {
+            border-color: #ffd166;
+            background: #161f2b;
+        }
+        .tag {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            border: 1px solid #2d3a49;
+            color: #bed0e4;
+        }
+        .table-wrap { margin-top: 10px; overflow: auto; border: 1px solid #1f2a36; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; min-width: 560px; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #1f2a36; font-size: 13px; }
+        th { color: #9fb0c5; background: #111823; font-weight: 600; }
+        tr:hover td { background: #121c29; }
+        .footer-note { margin-top: 14px; color: #9fb0c5; font-size: 12px; line-height: 1.45; }
+        .users-count {
+            margin-top: 8px;
+            color: #9fb0c5;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
+        .section-space { margin-top: 16px; }
+        .round {
+            border: 1px solid #273444;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+            background: #101722;
+        }
+        .round-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .round-title { font-size: 14px; color: #48FF00; font-weight: 700; }
+        .question-box {
+            border: 1px solid #223041;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #0d131c;
+        }
+        .question-label { font-size: 12px; color: #9fb0c5; margin-bottom: 6px; }
+        .question-box input {
+            width: 100%;
+            padding: 10px 11px;
+            border-radius: 10px;
+            border: 1px solid #1f4f2b;
+            background: #08110b;
+            color: #fff;
+            font-size: 14px;
+            box-shadow: inset 0 0 0 1px rgba(72,255,0,.08);
+            transition: all .2s ease;
+        }
+        .question-box input:focus {
+            outline: none;
+            border-color: #48FF00;
+            box-shadow: 0 0 0 2px rgba(72,255,0,.18), 0 0 14px rgba(72,255,0,.2);
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .option-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .option-row input[type="radio"] { accent-color: #ffd166; }
+        .status-line {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #9fb0c5;
+        }
+        .builder-shell {
+            display: none;
+            margin-top: 12px;
+        }
+        .builder-shell.active {
+            display: block;
+        }
+        .builder-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .history-count {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid #1f4f2b;
+            background: #08110b;
+            color: #86efac;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+        @media (max-width: 920px) {
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; position: static; }
+            .grid { grid-template-columns: 1fr; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 520px) {
+            .wrap { padding: 14px; }
+            .title { font-size: 32px; }
+            .header { padding: 12px; }
+            .chip { display: none; }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="logo"><img src="Untitled 1.png" alt="NOD"><span>NOD</span></div>
+    <div class="header-right">
+        <span class="chip">Admin Control</span>
+        <button class="btn" id="class-management-btn" onclick="location.href='admin-class-management.html'">Class Management</button>
+        <button class="btn" id="logout-btn">Logout</button>
+    </div>
+</header>
+
+<main class="wrap">
+    <h1 class="title">Admin Dashboard</h1>
+    <p class="subtitle">Manage users, assign admin role, and remove user profiles from the system.</p>
+
+    <div id="alert" class="alert"></div>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <section class="sidebar-builder">
+                <div class="builder-head">
+                    <h2 style="margin:0; font-size:20px;">Admin Quiz Builder</h2>
+                    <button class="btn btn-primary" id="open-builder-btn">Create Quiz</button>
+                </div>
+                <p class="muted" style="margin-top:8px;">Create quiz templates and push them to every active classroom. Admin does not create classrooms.</p>
+
+                <div id="builder-shell" class="builder-shell">
+                    <div class="field">
+                        <label for="admin-quiz-title">Quiz Title</label>
+                        <input id="admin-quiz-title" placeholder="Global Placeholder Quiz">
+                    </div>
+                    <div class="field">
+                        <label for="admin-quiz-description">Description</label>
+                        <input id="admin-quiz-description" placeholder="Optional description for teachers/students">
+                    </div>
+
+                    <div class="row" style="margin-top:10px;">
+                        <button class="btn" id="admin-add-round-btn">Add Round</button>
+                        <button class="btn btn-primary" id="admin-apply-all-btn">Create Default Quiz</button>
+                        <button class="btn" id="admin-reset-quiz-btn">Reset Builder</button>
+                    </div>
+
+                    <div id="admin-rounds-wrap"></div>
+                    <div class="status-line" id="quiz-action-status">Ready. Create Default Quiz will apply this template to all active classrooms.</div>
+                </div>
+            </section>
+
+            <div class="sidebar-title" style="margin-top:14px;">History</div>
+            <button class="menu-btn" id="toggle-quiz-history">▾ My Default Quizzes</button>
+            <div class="class-list" id="admin-quiz-history">
+                <div class="muted">Loading your quizzes...</div>
+            </div>
+        </aside>
+
+        <div class="main-pane">
+
+    <section class="grid">
+        <article class="card">
+            <h2>Find User By Username or Email</h2>
+            <p class="muted">Search is case-insensitive and supports partial matches (name, email, or UID). Edit, role assignment, restore, and delete actions only work after selecting a matched result.</p>
+
+            <div class="field">
+                <label for="identifier">Username or Email</label>
+                <input id="identifier" placeholder="e.g. johndoe or john@school.com">
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <button class="btn btn-primary" id="search-btn">Search User</button>
+                <button class="btn" id="clear-btn">Clear</button>
+            </div>
+
+            <div id="search-results" class="result-list"></div>
+
+            <hr style="border:0;border-top:1px solid #1f2a36;margin:14px 0;">
+
+            <h2 style="font-size:18px;">Edit Selected User</h2>
+            <div class="field">
+                <label for="edit-display-name">Display Name</label>
+                <input id="edit-display-name" placeholder="Display Name">
+            </div>
+            <div class="field">
+                <label for="edit-email">Email</label>
+                <input id="edit-email" type="email" placeholder="Email">
+            </div>
+            <div class="field">
+                <label for="edit-role">Role</label>
+                <select id="edit-role">
+                    <option value="student">student</option>
+                    <option value="teacher">teacher</option>
+                    <option value="admin">admin</option>
+                </select>
+            </div>
+
+            <div class="row" style="margin-top:12px;">
+                <button class="btn btn-primary" id="save-edit-btn">Save Edit</button>
+                <button class="btn" id="assign-admin-btn">Assign Admin</button>
+                <button class="btn" id="restore-user-btn">Restore User</button>
+                <button class="btn btn-danger" id="delete-user-btn">Delete User</button>
+            </div>
+        </article>
+
+        <article class="card">
+            <h2>All Users Snapshot</h2>
+            <p class="muted">Quick overview from users collection. Use the search box for exact target operations.</p>
+            <div class="row" style="margin-top:8px;">
+                <button class="btn" id="refresh-users-btn">Refresh Users</button>
+            </div>
+            <div class="users-count" id="users-count">Showing 0 users • 0 active • 0 deleted</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Display Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>UID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr><td colspan="4" class="muted">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="footer-note">Note: Deleting a user from this dashboard removes their users profile document. Firebase Authentication account deletion requires Admin SDK (server-side) and is not supported directly from this client-only app.</p>
+        </article>
+    </section>
+
+        </div>
+    </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+let me = null;
+let meData = null;
+let allUsers = [];
+let selectedUser = null;
+let activeIdentifier = '';
+let searchDebounceTimer = null;
+let adminQuizDraftRounds = [];
+let adminCreatedQuizzes = [];
+let adminQuizHistoryGroups = [];
+
+function showAlert(message, type) {
+    const el = document.getElementById('alert');
+    el.textContent = message;
+    el.className = 'alert ' + type;
+}
+
+function clearAlert() {
+    const el = document.getElementById('alert');
+    el.textContent = '';
+    el.className = 'alert';
+}
+
+function setQuizStatus(message) {
+    const el = document.getElementById('quiz-action-status');
+    if (el) el.textContent = message;
+}
+
+async function withButtonLoading(buttonId, loadingText, action) {
+    const btn = document.getElementById(buttonId);
+    if (!btn) {
+        return action();
+    }
+
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.classList.add('loading');
+    if (loadingText) btn.textContent = loadingText;
+
+    try {
+        return await action();
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.textContent = originalText;
+    }
+}
+
+function normalizeRole(role) {
+    return ['student', 'teacher', 'admin'].includes(role) ? role : 'student';
+}
+
+function escapeHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = value || '';
+    return div.innerHTML;
+}
+
+function bindEvents() {
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        auth.signOut().then(() => location.href = 'login.html');
+    });
+
+    document.getElementById('search-btn').addEventListener('click', searchUsers);
+    document.getElementById('clear-btn').addEventListener('click', clearSearchSelection);
+    document.getElementById('refresh-users-btn').addEventListener('click', refreshUsersTable);
+
+    document.getElementById('save-edit-btn').addEventListener('click', saveSelectedUserEdits);
+    document.getElementById('assign-admin-btn').addEventListener('click', assignAdminToSelected);
+    document.getElementById('restore-user-btn').addEventListener('click', restoreSelectedUser);
+    document.getElementById('delete-user-btn').addEventListener('click', deleteSelectedUser);
+
+    document.getElementById('identifier').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchUsers();
+    });
+
+    document.getElementById('identifier').addEventListener('input', () => {
+        if (searchDebounceTimer) {
+            clearTimeout(searchDebounceTimer);
+        }
+
+        const value = document.getElementById('identifier').value.trim();
+        if (!value) {
+            activeIdentifier = '';
+            selectedUser = null;
+            renderSearchResults([]);
+            clearAlert();
+            return;
+        }
+
+        searchDebounceTimer = setTimeout(() => {
+            searchUsers({ silent: true });
+        }, 250);
+    });
+
+    document.getElementById('admin-add-round-btn').addEventListener('click', addAdminRound);
+    document.getElementById('admin-apply-all-btn').addEventListener('click', applyAdminQuizToAllClassrooms);
+    document.getElementById('admin-reset-quiz-btn').addEventListener('click', resetAdminQuizBuilder);
+    document.getElementById('open-builder-btn').addEventListener('click', () => {
+        setBuilderOpen(!document.getElementById('builder-shell').classList.contains('active'));
+    });
+    document.getElementById('toggle-quiz-history').addEventListener('click', () => {
+        const list = document.getElementById('admin-quiz-history');
+        const collapsed = list.classList.toggle('collapsed');
+        document.getElementById('toggle-quiz-history').textContent = `${collapsed ? '▸' : '▾'} My Default Quizzes`;
+    });
+}
+
+function setBuilderOpen(open) {
+    const shell = document.getElementById('builder-shell');
+    const btn = document.getElementById('open-builder-btn');
+    if (!shell || !btn) return;
+
+    shell.classList.toggle('active', open);
+    btn.textContent = open ? 'Hide Builder' : 'Create Quiz';
+}
+
+function waitForAuth() {
+    const timer = setInterval(() => {
+        if (!auth) return;
+        clearInterval(timer);
+        auth.onAuthStateChanged(handleAuth);
+    }, 100);
+}
+
+function getDashboardByRole(role) {
+    if (role === 'admin') return 'admin-dashboard.html';
+    if (role === 'teacher') return 'teacher-dashboard.html';
+    return 'student-dashboard.html';
+}
+
+async function handleAuth(user) {
+    if (!user) return location.href = 'login.html';
+
+    me = user;
+    meData = await getUserByUid(user.uid);
+
+    if (!meData) {
+        showAlert('Your profile was not found in users collection.', 'error');
+        return;
+    }
+
+    if (meData.role !== 'admin') {
+        location.href = getDashboardByRole(meData.role);
+        return;
+    }
+
+    await Promise.all([
+        refreshUsersTable(),
+        loadAdminQuizHistory()
+    ]);
+}
+
+async function loadAdminQuizHistory() {
+    try {
+        adminCreatedQuizzes = await getQuizzesByTeacher(me.uid);
+        adminQuizHistoryGroups = groupAdminQuizHistory(adminCreatedQuizzes);
+        renderAdminQuizHistory();
+    } catch (error) {
+        console.error(error);
+        document.getElementById('admin-quiz-history').innerHTML = '<div class="muted">Could not load quiz history.</div>';
+    }
+}
+
+function normalizeQuizText(value) {
+    return (value || '').toString().trim().toLowerCase();
+}
+
+function normalizeRoundsForSignature(rounds) {
+    if (!Array.isArray(rounds)) return [];
+    return rounds.map(round => ({
+        questions: Array.isArray(round?.questions)
+            ? round.questions.map(question => ({
+                question: normalizeQuizText(question?.question),
+                hint: normalizeQuizText(question?.hint),
+                options: Array.isArray(question?.options)
+                    ? question.options.map(opt => normalizeQuizText(opt))
+                    : [],
+                correctAnswer: Number(question?.correctAnswer) || 0
+            }))
+            : []
+    }));
+}
+
+function getQuizTemplateSignature(quiz) {
+    const payload = {
+        title: normalizeQuizText(quiz?.title),
+        description: normalizeQuizText(quiz?.description),
+        rounds: normalizeRoundsForSignature(quiz?.rounds)
+    };
+    return JSON.stringify(payload);
+}
+
+function groupAdminQuizHistory(quizzes) {
+    const bySignature = new Map();
+
+    quizzes.forEach(quiz => {
+        const signature = getQuizTemplateSignature(quiz);
+        const createdAtMillis = quiz.createdAt?.toMillis?.() || 0;
+
+        if (!bySignature.has(signature)) {
+            bySignature.set(signature, {
+                signature,
+                title: quiz.title || 'Untitled Quiz',
+                description: quiz.description || '',
+                totalRounds: quiz.totalRounds || 0,
+                createdAtMillis,
+                classroomNames: new Set(),
+                quizzes: []
+            });
+        }
+
+        const group = bySignature.get(signature);
+        group.quizzes.push(quiz);
+        group.createdAtMillis = Math.max(group.createdAtMillis, createdAtMillis);
+        if (quiz.classroomName) {
+            group.classroomNames.add(quiz.classroomName);
+        }
+    });
+
+    return Array.from(bySignature.values())
+        .sort((a, b) => b.createdAtMillis - a.createdAtMillis)
+        .map(group => ({
+            ...group,
+            classroomNames: Array.from(group.classroomNames)
+        }));
+}
+
+function renderAdminQuizHistory() {
+    const container = document.getElementById('admin-quiz-history');
+    if (!adminQuizHistoryGroups.length) {
+        container.innerHTML = '<div class="muted">No admin-created quizzes yet.</div>';
+        return;
+    }
+
+    container.innerHTML = adminQuizHistoryGroups.map(group => `
+        <div class="class-link">
+            <div class="quiz-item-title">${escapeHtml(group.title || 'Untitled Quiz')}</div>
+            <div class="quiz-item-meta">${escapeHtml(group.description || 'No description')} • ${group.totalRounds || 0} rounds</div>
+            <span class="history-count">Applied in ${group.quizzes.length} classroom${group.quizzes.length === 1 ? '' : 's'}</span>
+            <div class="quiz-item-actions">
+                <button class="btn btn-danger btn-mini" onclick="deleteAdminQuizGroup('${encodeURIComponent(group.signature)}', this)">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function deleteAdminQuizGroup(encodedSignature, buttonEl) {
+    const signature = decodeURIComponent(encodedSignature || '');
+    if (!signature) return;
+
+    const group = adminQuizHistoryGroups.find(item => item.signature === signature);
+    if (!group || !group.quizzes.length) return;
+
+    if (!confirm(`Delete this default quiz from ${group.quizzes.length} classroom${group.quizzes.length === 1 ? '' : 's'}?`)) return;
+
+    const originalText = buttonEl ? buttonEl.textContent : 'Delete';
+    if (buttonEl) {
+        buttonEl.disabled = true;
+        buttonEl.textContent = 'Deleting';
+    }
+
+    try {
+        for (const quiz of group.quizzes) {
+            await deleteQuiz(quiz.id);
+        }
+        showAlert(`Deleted ${group.quizzes.length} duplicate quiz entr${group.quizzes.length === 1 ? 'y' : 'ies'}.`, 'ok');
+        await loadAdminQuizHistory();
+    } catch (error) {
+        console.error(error);
+        showAlert(error.message || 'Could not delete quiz.', 'error');
+    } finally {
+        if (buttonEl) {
+            buttonEl.disabled = false;
+            buttonEl.textContent = originalText;
+        }
+    }
+}
+
+async function refreshUsersTable() {
+    return withButtonLoading('refresh-users-btn', 'Refreshing', async () => {
+        try {
+            clearAlert();
+            allUsers = await getAllUsersForAdmin({
+                includeDeleted: true,
+                maxDocs: 10000,
+                pageSize: 400
+            });
+            renderUsersTable();
+        } catch (error) {
+            console.error(error);
+            showAlert(error.message || 'Could not load users.', 'error');
+        }
+    });
+}
+
+function renderUsersTable() {
+    const body = document.getElementById('users-table-body');
+    const countEl = document.getElementById('users-count');
+    const deletedCount = allUsers.filter(isSoftDeleted).length;
+    const totalCount = allUsers.length;
+    const activeCount = totalCount - deletedCount;
+
+    if (countEl) {
+        countEl.textContent = `Showing ${totalCount.toLocaleString()} user${totalCount === 1 ? '' : 's'} • ${activeCount.toLocaleString()} active • ${deletedCount.toLocaleString()} deleted`;
+    }
+
+    if (!allUsers.length) {
+        body.innerHTML = '<tr><td colspan="4" class="muted">No users found.</td></tr>';
+        return;
+    }
+
+    body.innerHTML = allUsers.map(user => `
+        <tr>
+            <td>${escapeHtml(user.displayName || '-')}</td>
+            <td>${escapeHtml(user.email || '-')}</td>
+            <td>${escapeHtml(user.role || '-')}${isSoftDeleted(user) ? ' • deleted' : ''}</td>
+            <td title="${escapeHtml(user.uid || user.id || '')}">${escapeHtml((user.uid || user.id || '').slice(0, 12))}${(user.uid || user.id || '').length > 12 ? '...' : ''}</td>
+        </tr>
+    `).join('');
+}
+
+function isSoftDeleted(user) {
+    return !!user && (user.isDeleted === true || user.status === 'deleted');
+}
+
+async function searchUsers(options = {}) {
+    const silent = options?.silent === true;
+    const identifier = document.getElementById('identifier').value.trim();
+    if (!identifier) {
+        if (!silent) {
+            showAlert('Enter at least part of a name, email, or UID.', 'error');
+        } else {
+            renderSearchResults([]);
+            clearAlert();
+        }
+        return;
+    }
+
+    const runSearch = async () => {
+        try {
+            if (!silent) clearAlert();
+            activeIdentifier = identifier;
+            const results = await findUsersByIdentifier(identifier, true);
+            renderSearchResults(results);
+
+            if (!results.length && !silent) {
+                showAlert('No user match found. Try fewer characters or a different part of the name/email/UID.', 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            if (!silent) {
+                showAlert(error.message || 'Search failed.', 'error');
+            }
+        }
+    };
+
+    if (silent) {
+        return runSearch();
+    }
+
+    return withButtonLoading('search-btn', 'Searching', runSearch);
+}
+
+function renderSearchResults(results) {
+    const container = document.getElementById('search-results');
+
+    if (!results.length) {
+        selectedUser = null;
+        syncEditForm();
+        container.innerHTML = '<div class="muted">No matches yet.</div>';
+        return;
+    }
+
+    container.innerHTML = results.map((user, index) => `
+        <div class="result-item ${index === 0 ? 'active' : ''}" data-uid="${escapeHtml(user.id)}">
+            <strong>${escapeHtml(user.displayName || 'Unnamed')}</strong>
+            <div class="muted">${escapeHtml(user.email || 'No email')}</div>
+            <span class="tag">${escapeHtml(user.role || 'student')}${isSoftDeleted(user) ? ' • deleted' : ''}</span>
+        </div>
+    `).join('');
+
+    selectedUser = results[0];
+    syncEditForm();
+
+    container.querySelectorAll('.result-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const uid = item.getAttribute('data-uid');
+            const next = results.find(user => user.id === uid);
+            if (!next) return;
+
+            selectedUser = next;
+            container.querySelectorAll('.result-item').forEach(node => node.classList.remove('active'));
+            item.classList.add('active');
+            syncEditForm();
+        });
+    });
+}
+
+function syncEditForm() {
+    document.getElementById('edit-display-name').value = selectedUser?.displayName || '';
+    document.getElementById('edit-email').value = selectedUser?.email || '';
+    document.getElementById('edit-role').value = normalizeRole(selectedUser?.role || 'student');
+
+    const restoreBtn = document.getElementById('restore-user-btn');
+    if (restoreBtn) {
+        restoreBtn.disabled = !isSoftDeleted(selectedUser);
+    }
+}
+
+function clearSearchSelection() {
+    activeIdentifier = '';
+    selectedUser = null;
+    document.getElementById('identifier').value = '';
+    document.getElementById('search-results').innerHTML = '<div class="muted">No matches yet.</div>';
+    syncEditForm();
+    clearAlert();
+}
+
+function ensureUserSelected() {
+    if (!activeIdentifier) {
+        showAlert('Search by username/email first.', 'error');
+        return false;
+    }
+    if (!selectedUser || !selectedUser.id) {
+        showAlert('Select a matched user first.', 'error');
+        return false;
+    }
+    return true;
+}
+
+async function saveSelectedUserEdits() {
+    if (!ensureUserSelected()) return;
+
+    const displayName = document.getElementById('edit-display-name').value.trim();
+    const email = document.getElementById('edit-email').value.trim();
+    const role = normalizeRole(document.getElementById('edit-role').value);
+
+    if (!displayName || !email) {
+        showAlert('Display name and email are required.', 'error');
+        return;
+    }
+
+    return withButtonLoading('save-edit-btn', 'Saving', async () => {
+        try {
+            await adminUpdateUserByUid(selectedUser.id, { displayName, email, role });
+            showAlert('User updated successfully.', 'ok');
+            await searchUsers();
+            await refreshUsersTable();
+        } catch (error) {
+            console.error(error);
+            showAlert(error.message || 'Failed to update user.', 'error');
+        }
+    });
+}
+
+async function assignAdminToSelected() {
+    if (!ensureUserSelected()) return;
+
+    return withButtonLoading('assign-admin-btn', 'Assigning', async () => {
+        try {
+            await adminAssignRoleByUid(selectedUser.id, 'admin');
+            showAlert('User role updated to admin.', 'ok');
+            await searchUsers();
+            await refreshUsersTable();
+        } catch (error) {
+            console.error(error);
+            showAlert(error.message || 'Failed to assign admin role.', 'error');
+        }
+    });
+}
+
+async function deleteSelectedUser() {
+    if (!ensureUserSelected()) return;
+
+    if (!confirm('Delete this user profile from users collection?')) return;
+
+    return withButtonLoading('delete-user-btn', 'Deleting', async () => {
+        try {
+            const result = await adminDeleteUserByUid(selectedUser.id);
+            if (result.deletedAuthAccount) {
+                showAlert('User deleted from users collection and Authentication.', 'ok');
+            } else {
+                showAlert('User account deactivated. The user can no longer log in, even if Auth record still exists.', 'ok');
+            }
+            clearSearchSelection();
+            await refreshUsersTable();
+        } catch (error) {
+            console.error(error);
+            showAlert(error.message || 'Delete failed.', 'error');
+        }
+    });
+}
+
+async function restoreSelectedUser() {
+    if (!ensureUserSelected()) return;
+
+    if (!isSoftDeleted(selectedUser)) {
+        showAlert('Selected user is already active.', 'error');
+        return;
+    }
+
+    return withButtonLoading('restore-user-btn', 'Restoring', async () => {
+        try {
+            await adminRestoreUserByUid(selectedUser.id);
+            showAlert('User restored successfully. They can sign in again.', 'ok');
+            await searchUsers();
+            await refreshUsersTable();
+        } catch (error) {
+            console.error(error);
+            showAlert(error.message || 'Restore failed.', 'error');
+        }
+    });
+}
+
+function createEmptyAdminRound() {
+    return {
+        questions: Array(5).fill(null).map(() => ({ question: '', options: ['', '', '', ''], correctAnswer: 0, hint: '' }))
+    };
+}
+
+function addAdminRound() {
+    adminQuizDraftRounds.push(createEmptyAdminRound());
+    renderAdminRounds();
+}
+
+function removeAdminRound(roundIndex) {
+    if (adminQuizDraftRounds.length <= 1) {
+        showAlert('At least one round is required.', 'error');
+        return;
+    }
+    adminQuizDraftRounds.splice(roundIndex, 1);
+    renderAdminRounds();
+}
+
+function updateAdminQuestion(r, q, value) {
+    adminQuizDraftRounds[r].questions[q].question = value;
+}
+
+function updateAdminHint(r, q, value) {
+    adminQuizDraftRounds[r].questions[q].hint = value;
+}
+
+function updateAdminOption(r, q, o, value) {
+    adminQuizDraftRounds[r].questions[q].options[o] = value;
+}
+
+function setAdminCorrect(r, q, o) {
+    adminQuizDraftRounds[r].questions[q].correctAnswer = o;
+}
+
+function renderAdminRounds() {
+    const wrap = document.getElementById('admin-rounds-wrap');
+    wrap.innerHTML = adminQuizDraftRounds.map((round, rIndex) => `
+        <div class="round">
+            <div class="round-title-row">
+                <div class="round-title">Round ${rIndex + 1}</div>
+                <button class="btn" onclick="removeAdminRound(${rIndex})" ${adminQuizDraftRounds.length <= 1 ? 'disabled' : ''}>Delete Round</button>
+            </div>
+
+            ${round.questions.map((q, qIndex) => `
+                <div class="question-box">
+                    <div class="question-label">Question ${qIndex + 1}</div>
+                    <input value="${escapeHtml(q.question || '')}" placeholder="Type your question..." oninput="updateAdminQuestion(${rIndex},${qIndex},this.value)">
+                    <div class="field" style="margin-top:8px;">
+                        <label>Hint (optional)</label>
+                        <input value="${escapeHtml(q.hint || '')}" placeholder="Add hint" oninput="updateAdminHint(${rIndex},${qIndex},this.value)">
+                    </div>
+                    <div class="options-grid">
+                        ${q.options.map((opt, oIndex) => `
+                            <div class="option-row">
+                                <input type="radio" name="admin-r${rIndex}q${qIndex}" ${q.correctAnswer === oIndex ? 'checked' : ''} onchange="setAdminCorrect(${rIndex},${qIndex},${oIndex})">
+                                <input value="${escapeHtml(opt || '')}" placeholder="Option ${oIndex + 1}" oninput="updateAdminOption(${rIndex},${qIndex},${oIndex},this.value)">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+}
+
+function validateAdminQuizForm() {
+    const title = document.getElementById('admin-quiz-title').value.trim();
+    if (!title) {
+        return { ok: false, message: 'Quiz title is required.' };
+    }
+    if (!adminQuizDraftRounds.length) {
+        return { ok: false, message: 'Add at least one round.' };
+    }
+
+    for (let r = 0; r < adminQuizDraftRounds.length; r++) {
+        const round = adminQuizDraftRounds[r];
+        for (let q = 0; q < round.questions.length; q++) {
+            const question = round.questions[q];
+            if (!question.question.trim()) {
+                return { ok: false, message: `Round ${r + 1}, Question ${q + 1} is empty.` };
+            }
+            for (let o = 0; o < question.options.length; o++) {
+                if (!question.options[o].trim()) {
+                    return { ok: false, message: `Round ${r + 1}, Question ${q + 1}, Option ${o + 1} is empty.` };
+                }
+            }
+        }
+    }
+
+    return { ok: true };
+}
+
+function resetAdminQuizBuilder() {
+    document.getElementById('admin-quiz-title').value = '';
+    document.getElementById('admin-quiz-description').value = '';
+    adminQuizDraftRounds = [createEmptyAdminRound()];
+    renderAdminRounds();
+    setQuizStatus('Builder reset.');
+}
+
+async function applyAdminQuizToAllClassrooms() {
+    const validation = validateAdminQuizForm();
+    if (!validation.ok) {
+        showAlert(validation.message, 'error');
+        return;
+    }
+
+    const title = document.getElementById('admin-quiz-title').value.trim();
+    const description = document.getElementById('admin-quiz-description').value.trim();
+
+    return withButtonLoading('admin-apply-all-btn', 'Applying', async () => {
+        try {
+            clearAlert();
+            setQuizStatus('Applying quiz to all active classrooms...');
+
+            const result = await createAdminQuizForAllClassrooms(
+                me.uid,
+                meData.displayName || me.email || 'Admin',
+                {
+                    title,
+                    description,
+                    rounds: adminQuizDraftRounds
+                }
+            );
+
+            showAlert(`Applied to ${result.appliedCount}/${result.totalClassrooms} classrooms.`, 'ok');
+            setQuizStatus(`Done: ${result.appliedCount} applied, ${result.skippedCount} skipped.`);
+            await loadAdminQuizHistory();
+            resetAdminQuizBuilder();
+            setBuilderOpen(false);
+        } catch (error) {
+            console.error(error);
+            showAlert(error.message || 'Could not apply quiz to classrooms.', 'error');
+            setQuizStatus('Failed.');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeFirebase();
+    bindEvents();
+    waitForAuth();
+    document.getElementById('search-results').innerHTML = '<div class="muted">No matches yet.</div>';
+    resetAdminQuizBuilder();
+    setBuilderOpen(false);
+});
+</script>
+</body>
+</html>

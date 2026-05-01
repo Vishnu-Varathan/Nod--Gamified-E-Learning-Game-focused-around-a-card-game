@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - NOD Battle</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lobby.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto:wght@400;700&family=Iceberg&family=IBM+Plex+Mono:wght@400;500;600;700&family=Bungee+Inline&family=Bungee&family=Finlandica:wght@400;500;600;700&family=Josefin+Sans:wght@400;600;700&family=Alkalami&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        .header-profile{
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            padding:6px 10px;
+            border-radius:12px;
+            border:1px solid #333;
+            background:rgba(255,255,255,.02);
+            color:#fff;
+            cursor:pointer;
+            transition:all .2s ease;
+        }
+        .header-profile:hover{border-color:#48FF00;color:#48FF00}
+        .header-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            border:1px solid #3a3a3a;
+            object-fit:cover;
+            background:#0f0f0f;
+        }
+        .header-name{font-weight:700;font-size:14px}
+        .btn{
+            padding:10px 15px;
+            border-radius:10px;
+            border:1px solid #333;
+            background:rgba(255,255,255,.02);
+            color:#aaa;
+            min-height:40px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            line-height:1;
+            cursor:pointer;
+            font-weight:500;
+            transition:all .2s ease;
+        }
+        .btn:hover{border-color:#48FF00;color:#48FF00}
+        .btn-primary{
+            background:linear-gradient(135deg,#48FF00,#00c853);
+            color:#000;
+            border:none;
+            font-weight:700;
+            box-shadow:0 10px 22px rgba(72,255,0,.2);
+        }
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);justify-content:center;align-items:center;padding:16px;z-index:200}
+        .modal-overlay.active{display:flex}
+        .modal{width:100%;max-width:540px;background:linear-gradient(145deg, rgba(22,22,22,.97), rgba(16,16,16,.97));border:1px solid #333;border-radius:14px;padding:18px;box-shadow:0 20px 45px rgba(0,0,0,.45)}
+        .modal-title{font-size:22px;margin-bottom:10px;color:#48FF00;font-family:'Iceberg',cursive}
+        .field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+        .field label{font-size:13px;color:#b8b8b8}
+        .field input{padding:11px 12px;border-radius:10px;border:1px solid #333;background:#0a0a0a;color:#fff;transition:border-color .2s,box-shadow .2s}
+        .field input:focus{outline:none;border-color:#48FF00;box-shadow:0 0 0 2px rgba(72,255,0,.12)}
+        .crop-shell{margin-top:10px;border:1px solid #252525;border-radius:12px;background:#0a0a0a;padding:10px}
+        .crop-shell img{max-width:100%;display:block;max-height:320px;margin:0 auto;border-radius:12px}
+        .cropper-view-box,.cropper-face{border-radius:50%}
+        .help{color:#8b8b8b;font-size:12px;line-height:1.35;margin-top:8px}
+        .modal-actions{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
+    </style>
+</head>
+<body>
+    <!-- Start Screen / Game Lobby -->
+    <div id="start-screen" class="screen active">
+        <!-- Animated Neon Green Wavy Background -->
+        <div class="lobby-wavy-bg">
+            <svg class="wavy-svg lobby-waves" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <filter id="glow-green">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="glow-green-strong">
+                        <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <path class="wave wave1" d="M-100,500 C100,350 300,650 500,500 C700,350 900,650 1100,500 C1300,350 1500,650 1700,500 C1900,350 2100,650 2300,500" fill="none" stroke="#48FF00" stroke-width="2" filter="url(#glow-green)"/>
+                <path class="wave wave2" d="M-100,600 C150,430 350,770 550,600 C750,430 950,770 1150,600 C1350,430 1550,770 1750,600 C1950,430 2150,770 2350,600" fill="none" stroke="#3adf00" stroke-width="2.5" filter="url(#glow-green-strong)"/>
+                <path class="wave wave3" d="M-100,700 C80,540 280,860 480,700 C680,540 880,860 1080,700 C1280,540 1480,860 1680,700 C1880,540 2080,860 2280,700" fill="none" stroke="#48FF00" stroke-width="1.5" filter="url(#glow-green)"/>
+                <path class="wave wave4" d="M-100,800 C120,620 320,980 520,800 C720,620 920,980 1120,800 C1320,620 1520,980 1720,800 C1920,620 2120,980 2320,800" fill="none" stroke="#5fff33" stroke-width="3" filter="url(#glow-green-strong)"/>
+                <path class="wave wave5" d="M-100,900 C100,740 300,1060 500,900 C700,740 900,1060 1100,900 C1300,740 1500,1060 1700,900 C1900,740 2100,1060 2300,900" fill="none" stroke="#48FF00" stroke-width="2" filter="url(#glow-green)"/>
+                <path class="wave wave6" d="M-100,1000 C130,830 330,1170 530,1000 C730,830 930,1170 1130,1000 C1330,830 1530,1170 1730,1000 C1930,830 2130,1170 2330,1000" fill="none" stroke="#3adf00" stroke-width="2" filter="url(#glow-green)"/>
+                <path class="wave wave7" d="M-100,550 C200,380 400,720 600,550 C800,380 1000,720 1200,550 C1400,380 1600,720 1800,550 C2000,380 2200,720 2400,550" fill="none" stroke="#48FF00" stroke-width="1.5" filter="url(#glow-green)" opacity="0.7"/>
+                <path class="wave wave8" d="M-100,850 C100,680 300,1020 500,850 C700,680 900,1020 1100,850 C1300,680 1500,1020 1700,850 C1900,680 2100,1020 2300,850" fill="none" stroke="#3adf00" stroke-width="1.5" filter="url(#glow-green)" opacity="0.7"/>
+            </svg>
+        </div>
+
+        <!-- Top Header Banner -->
+        <div class="lobby-header">
+            <div class="lobby-header-left">
+                <div class="nod-logo">
+                    <img src="Untitled 1.png" alt="NOD Logo">
+                    <span class="nod-logo-text">NOD</span>
+                </div>
+            </div>
+            <div class="lobby-header-right">
+                <button class="header-profile" id="header-profile" type="button" aria-label="Open profile">
+                    <img id="header-avatar-img" class="header-avatar" src="userprofiledefault.png" alt="Profile picture">
+                    <span id="header-username" class="header-name">Loading...</span>
+                </button>
+                <button class="lobby-logout-btn" id="logout-btn">Logout</button>
+                <div class="hamburger-menu-wrapper">
+                    <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="hamburger-dropdown" id="hamburger-dropdown">
+                        <a href="landing.html">Landing Page</a>
+                        <a href="student-dashboard.html" id="dashboard-link">My Dashboard</a>
+                        <a href="student-dashboard.html" id="classroom-link">My Classroom</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lobby Content -->
+        <div class="lobby-content">
+            <!-- Title Section -->
+            <div class="lobby-title-section">
+                <div class="lobby-title-row">
+                    <div class="lobby-swords">
+                        <img src="sword2.png" alt="Sword" class="sword-img sword-back">
+                        <img src="sword3.png" alt="Sword" class="sword-img sword-front">
+                    </div>
+                    <h1 class="lobby-game-title">NOD BATTLE</h1>
+                    <div class="lobby-cardart">
+                        <img src="cardart2.png" alt="Cards Art" class="cardart-img">
+                    </div>
+                </div>
+                <p class="lobby-subtitle">Game Based Learning System</p>
+            </div>
+
+            <!-- Player Cards Section -->
+            <div class="lobby-players-row">
+                <!-- Player 1 Card -->
+                <div class="lobby-player-card lobby-p1-card">
+                    <div class="lobby-player-label">Player 1 <span class="lobby-you-badge">You</span></div>
+                    <div class="lobby-player-body">
+                        <div class="lobby-player-profile">
+                            <div class="lobby-profile-pic-wrapper" id="p1-profile-wrapper" title="Click to change profile picture">
+                                <img class="lobby-profile-pic" id="p1-profile-pic" src="userprofiledefault.png" alt="Profile">
+                                <button class="lobby-profile-plus" id="p1-profile-plus">+</button>
+                            </div>
+                            <span class="lobby-player-name" id="p1-name-display">Loading...</span>
+                        </div>
+                        <div class="lobby-player-stats">
+                            <div class="lobby-stats-title">Stats</div>
+                            <div class="lobby-stat-item wins">Wins - <span id="p1-wins">0</span></div>
+                            <div class="lobby-stat-item losses">Losses - <span id="p1-losses">0</span></div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="player1-name" value="">
+                    <input type="hidden" id="player1-uid" value="">
+                </div>
+
+                <!-- Player 2 Card -->
+                <div class="lobby-player-card lobby-p2-card">
+                    <div class="lobby-player-label lobby-p2-label">Player 2 <span id="p2-lock-badge" class="lobby-lock-badge" style="display:none;">LOCKED</span></div>
+                    <div id="player2-input-section" class="lobby-p2-input-section">
+                        <div class="lobby-p2-input-group">
+                            <input type="text" id="player2-name-input" placeholder="Enter opponent's registered username ...">
+                            <button class="lobby-verify-btn" id="verify-btn" onclick="verifyPlayer2()">Verify</button>
+                        </div>
+                        <div class="player2-status" id="player2-status"></div>
+                    </div>
+                    <div id="player2-verified-section" style="display: none;">
+                        <div class="lobby-player-body">
+                            <div class="lobby-player-profile">
+                                <div class="lobby-profile-pic-wrapper" id="p2-profile-wrapper" title="Click to change profile picture">
+                                    <img class="lobby-profile-pic" id="p2-profile-pic" src="userprofiledefault.png" alt="Profile">
+                                    <button class="lobby-profile-plus lobby-profile-plus-p2" id="p2-profile-plus">+</button>
+                                </div>
+                                <span class="lobby-player-name" id="p2-verified-name"></span>
+                            </div>
+                            <div class="lobby-player-stats">
+                                <div class="lobby-stats-title">Stats</div>
+                                <div class="lobby-stat-item wins">Wins - <span id="p2-wins">0</span></div>
+                                <div class="lobby-stat-item losses">Losses - <span id="p2-losses">0</span></div>
+                            </div>
+                        </div>
+                        <button class="lobby-change-btn" onclick="resetPlayer2()">Change Player</button>
+                    </div>
+                    <input type="hidden" id="player2-name" value="">
+                    <input type="hidden" id="player2-uid" value="">
+                </div>
+            </div>
+
+            <!-- Start Battle Button -->
+            <button id="start-game-btn" class="lobby-start-btn" disabled>START BATTLE</button>
+
+            <!-- Firebase Status -->
+            <div class="lobby-firebase-status">
+                <span id="firebase-indicator" class="indicator offline"></span>
+                <span id="firebase-status-text">Connecting to Firebase...</span>
+            </div>
+        </div>
+
+        <!-- Profile Picture Crop Modal (same flow as student dashboard) -->
+        <div class="modal-overlay" id="crop-modal" aria-hidden="true">
+            <div class="modal" role="dialog" aria-modal="true" aria-label="Edit profile photo">
+                <h3 class="modal-title">Edit Profile Photo</h3>
+                <div class="field">
+                    <label>Upload Image</label>
+                    <input id="crop-file-input" type="file" accept="image/*">
+                </div>
+                <div class="field">
+                    <label>Or paste Image URL</label>
+                    <input id="crop-url" placeholder="https://...">
+                </div>
+                <button class="btn" id="crop-load-btn" type="button">Load</button>
+                <div class="crop-shell" id="crop-shell" style="display:none;">
+                    <img id="crop-preview-img" alt="Crop profile image">
+                    <div class="help">Drag to position and scroll/pinch to zoom. The circle shows what will fit your profile frame.</div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" id="crop-close-btn" type="button">Cancel</button>
+                    <button class="btn btn-primary" id="crop-confirm-btn" type="button">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <!-- Animated Wavy Background -->
+        <div class="wavy-bg">
+            <!-- Blue waves for Player 1 -->
+            <svg class="wavy-svg waves-blue" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <filter id="glow-blue">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="glow-blue-strong">
+                        <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <path class="wave wave1" d="M-100,200 Q200,100 400,200 T800,200 T1200,200 T1600,200 T2000,200" fill="none" stroke="#00d4ff" stroke-width="2" filter="url(#glow-blue)"/>
+                <path class="wave wave2" d="M-100,350 Q300,250 500,350 T900,350 T1300,350 T1700,350 T2100,350" fill="none" stroke="#00b4ff" stroke-width="2.5" filter="url(#glow-blue-strong)"/>
+                <path class="wave wave3" d="M-100,500 Q250,400 450,500 T850,500 T1250,500 T1650,500 T2050,500" fill="none" stroke="#00e4ff" stroke-width="1.5" filter="url(#glow-blue)"/>
+                <path class="wave wave4" d="M-100,650 Q350,550 550,650 T950,650 T1350,650 T1750,650 T2150,650" fill="none" stroke="#00c4ff" stroke-width="3" filter="url(#glow-blue-strong)"/>
+                <path class="wave wave5" d="M-100,800 Q200,700 400,800 T800,800 T1200,800 T1600,800 T2000,800" fill="none" stroke="#00d4ff" stroke-width="2" filter="url(#glow-blue)"/>
+                <path class="wave wave6" d="M-100,950 Q280,850 480,950 T880,950 T1280,950 T1680,950 T2080,950" fill="none" stroke="#00a4ff" stroke-width="2" filter="url(#glow-blue)"/>
+                <path class="wave wave7" d="M-100,150 Q400,50 600,150 T1000,250 T1400,150 T1800,250 T2200,150" fill="none" stroke="#00f4ff" stroke-width="1.5" filter="url(#glow-blue)" opacity="0.7"/>
+                <path class="wave wave8" d="M-100,750 Q350,650 550,750 T950,850 T1350,750 T1750,850 T2150,750" fill="none" stroke="#00b4ff" stroke-width="1.5" filter="url(#glow-blue)" opacity="0.7"/>
+            </svg>
+            <!-- Red waves for Player 2 -->
+            <svg class="wavy-svg waves-red" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <filter id="glow-red">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="glow-red-strong">
+                        <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <path class="wave wave1" d="M-100,200 Q200,100 400,200 T800,200 T1200,200 T1600,200 T2000,200" fill="none" stroke="#ff3030" stroke-width="2" filter="url(#glow-red)"/>
+                <path class="wave wave2" d="M-100,350 Q300,250 500,350 T900,350 T1300,350 T1700,350 T2100,350" fill="none" stroke="#ff5050" stroke-width="2.5" filter="url(#glow-red-strong)"/>
+                <path class="wave wave3" d="M-100,500 Q250,400 450,500 T850,500 T1250,500 T1650,500 T2050,500" fill="none" stroke="#ff2020" stroke-width="1.5" filter="url(#glow-red)"/>
+                <path class="wave wave4" d="M-100,650 Q350,550 550,650 T950,650 T1350,650 T1750,650 T2150,650" fill="none" stroke="#ff4040" stroke-width="3" filter="url(#glow-red-strong)"/>
+                <path class="wave wave5" d="M-100,800 Q200,700 400,800 T800,800 T1200,800 T1600,800 T2000,800" fill="none" stroke="#ff3030" stroke-width="2" filter="url(#glow-red)"/>
+                <path class="wave wave6" d="M-100,950 Q280,850 480,950 T880,950 T1280,950 T1680,950 T2080,950" fill="none" stroke="#ff6060" stroke-width="2" filter="url(#glow-red)"/>
+                <path class="wave wave7" d="M-100,150 Q400,50 600,150 T1000,250 T1400,150 T1800,250 T2200,150" fill="none" stroke="#ff1010" stroke-width="1.5" filter="url(#glow-red)" opacity="0.7"/>
+                <path class="wave wave8" d="M-100,750 Q350,650 550,750 T950,850 T1350,750 T1750,850 T2150,750" fill="none" stroke="#ff5050" stroke-width="1.5" filter="url(#glow-red)" opacity="0.7"/>
+            </svg>
+        </div>
+
+        <!-- Game Header Bar -->
+        <div id="game-header">
+            <div class="game-header-left">
+                <div class="nod-logo">
+                    <img src="Untitled 1.png" alt="NOD Logo">
+                    <span class="nod-logo-text">NOD</span>
+                </div>
+            </div>
+            <div class="game-header-right">
+                <div class="game-user-info">
+                    <div class="game-user-avatar" id="game-avatar">
+                        <span id="game-avatar-letter">?</span>
+                        <img id="game-avatar-img" src="" alt="" class="game-avatar-img" style="display:none;">
+                    </div>
+                    <span class="game-username" id="game-username">Player</span>
+                </div>
+                <button class="game-logout-btn" id="game-logout-btn">Logout</button>
+                <div class="hamburger-menu-wrapper">
+                    <button class="hamburger-btn" id="game-hamburger-btn" aria-label="Menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="hamburger-dropdown" id="game-hamburger-dropdown">
+                        <a href="landing.html">Landing Page</a>
+                        <a href="student-dashboard.html" id="game-dashboard-link">My Dashboard</a>
+                        <a href="student-dashboard.html" id="game-classroom-link">My Classroom</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top HUD - Timer, Round, Resign -->
+        <div id="top-hud">
+            <div id="game-timer">
+                <span class="timer-label">Time left :</span>
+                <span id="timer-display">10:00</span>
+            </div>
+            <div id="round-info">
+                <span class="round-label">Round</span>
+                <span id="round-number">1</span>
+            </div>
+            <!-- Hidden leaderboard data -->
+            <div id="leaderboard" style="display:none;">
+                <div class="leaderboard-row">
+                    <span id="lb-p1-name">Player 1</span>
+                    <span id="lb-p1-score">0</span>
+                </div>
+                <div class="leaderboard-row">
+                    <span id="lb-p2-name">Player 2</span>
+                    <span id="lb-p2-score">0</span>
+                </div>
+            </div>
+            <button id="resign-btn" title="Resign from game">🏳️ Resign</button>
+        </div>
+
+        <!-- Current Player Indicator with Avatar -->
+        <div id="current-player-banner">
+            <div id="banner-avatar">
+                <span id="banner-avatar-initials">P1</span>
+                <img id="banner-avatar-img" src="" alt="" class="banner-avatar-img" style="display:none;">
+            </div>
+            <div id="banner-text">
+                <span id="player-number-label">PLAYER 1</span>
+                <span id="current-player-name">Player 1's Turn</span>
+            </div>
+        </div>
+
+        <!-- Main Game Content - Two Column Layout -->
+        <div id="game-content">
+            <!-- Left: Card Deck Panel -->
+            <div id="card-deck-panel">
+                <div class="deck-header">
+                    <h2 id="play-instruction">PLAY A CARD</h2>
+                    <div class="right-click-info">
+                        <img src="rightclickmouse.png" alt="Right Click" class="right-click-icon">
+                        <span class="right-click-text">right click to<br>expand card view</span>
+                    </div>
+                </div>
+                <div id="cards-scroll-area">
+                    <div id="cards-container">
+                        <!-- Cards will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Card Display / Battlefield -->
+            <div id="card-display-area">
+                <div id="player-card-slot" class="card-slot empty">
+                    <img src="playcardframeplayer1.png" alt="Card Frame" class="card-frame-img" id="card-frame-img">
+                    <div class="played-card-overlay" id="played-card-overlay"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Selection Sound -->
+        <audio id="card-select-sound" src="cardselection.mp3" preload="auto"></audio>
+        <!-- Fight Sound -->
+        <audio id="countdown-sound" src="fightsound.wav" preload="auto"></audio>
+        <!-- Capture Card Sound -->
+        <audio id="capture-card-sound" src="capturecardsound.mp3" preload="auto"></audio>
+        <!-- 321 Countdown Sound -->
+        <audio id="countdown-321-sound" src="321sound.wav" preload="auto"></audio>
+        <!-- Winner Sound -->
+        <audio id="winner-sound" src="winnersound.mp3" preload="auto"></audio>
+    </div>
+
+    <!-- Turn Transition Screen (Pass Device) -->
+    <div id="transition-screen" class="screen overlay">
+        <div id="transition-header" class="game-header-clone"></div>
+        <div class="transition-bg-img"></div>
+        <div class="transition-content">
+            <h2 id="transition-message">PASS DEVICE TO</h2>
+            <h1 id="next-player-name">Player 2</h1>
+            <div id="transition-timer">3</div>
+            <p class="transition-ready">GET READY !</p>
+        </div>
+    </div>
+
+    <!-- Card Reveal 321 Countdown Screen -->
+    <div id="countdown-321-screen" class="screen overlay">
+        <div id="countdown321-header" class="game-header-clone"></div>
+        <div class="countdown321-split-bg">
+            <div class="countdown321-left"></div>
+            <div class="countdown321-right"></div>
+            <div class="countdown321-divider"></div>
+        </div>
+        <div class="countdown321-content">
+            <div class="countdown321-player countdown321-p1">
+                <span class="countdown321-player-name" id="countdown321-p1-name">Player 1</span>
+                <div class="countdown321-card-holder">
+                    <img src="prerevealcard.png" alt="Hidden Card" class="countdown321-prereveal">
+                </div>
+            </div>
+            <div class="countdown321-center">
+                <div class="countdown321-circle" id="countdown321-circle">
+                    <span id="countdown321-number">3</span>
+                </div>
+            </div>
+            <div class="countdown321-player countdown321-p2">
+                <span class="countdown321-player-name" id="countdown321-p2-name">Player 2</span>
+                <div class="countdown321-card-holder">
+                    <img src="prerevealcard.png" alt="Hidden Card" class="countdown321-prereveal">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Battle Reveal Screen (New Trapezium BG) -->
+    <div id="battle-screen" class="screen overlay">
+        <!-- Game Header clone for battle/result -->
+        <div id="battle-header" class="game-header-clone"></div>
+        <div class="battle-trapezium-bg">
+            <div class="trap-white-side"></div>
+            <div class="trap-black-side"></div>
+        </div>
+        <!-- VS images positioned absolutely over the trapezium -->
+        <div class="battle-vs-container" id="battle-vs-container">
+            <img src="VforVSpng.png" alt="V" class="vs-letter vs-v" id="vs-v-letter">
+            <img src="SforVSpng.png" alt="S" class="vs-letter vs-s" id="vs-s-letter">
+        </div>
+        <div class="battle-content-layer">
+            <h1 id="battle-result-title" class="battle-result-title">RESULT</h1>
+            <div class="battle-cards-row">
+                <div id="battle-p1-card" class="battle-card-wrapper">
+                    <img src="prerevealcard.png" alt="Hidden Card" class="prereveal-card-img">
+                </div>
+                <div id="battle-p2-card" class="battle-card-wrapper">
+                    <img src="prerevealcard.png" alt="Hidden Card" class="prereveal-card-img">
+                </div>
+            </div>
+            <!-- Winner result overlay -->
+            <div id="result-info-panel" class="result-info-panel" style="display:none;">
+                <div class="result-info-card">
+                    <img src="trophy.png" alt="Trophy" class="result-trophy-bg">
+                    <h2 id="result-winner-name" class="result-winner-name"></h2>
+                    <h1 id="result-won-text" class="result-won-text">WON !</h1>
+                    <p id="result-capture-text" class="result-capture-text"></p>
+                    <button id="continue-btn" class="result-continue-btn">Continue</button>
+                </div>
+            </div>
+            <!-- Stalemate result overlay -->
+            <div id="stalemate-info-panel" class="stalemate-info-panel" style="display:none;">
+                <div class="stalemate-info-card">
+                    <h1 class="stalemate-title">STALEMATE</h1>
+                    <p class="stalemate-text">Cards returned, same card cannot be played next round</p>
+                    <button id="stalemate-continue-btn" class="result-continue-btn">Continue</button>
+                </div>
+            </div>
+            <!-- WINNER label -->
+            <div id="winner-label" class="winner-floating-label" style="display:none;">WINNER</div>
+        </div>
+    </div>
+
+    <!-- Result Screen (legacy, hidden) -->
+    <div id="result-screen" class="screen overlay" style="display:none !important;">
+        <div class="result-content">
+            <h2 id="result-title">RESULT</h2>
+            <div id="result-cards">
+                <div id="result-p1-card" class="result-card"></div>
+                <div id="result-vs">VS</div>
+                <div id="result-p2-card" class="result-card"></div>
+            </div>
+            <h1 id="result-message">Player 1 Wins!</h1>
+            <p id="result-details">Card captured!</p>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="screen overlay">
+        <div id="gameover-header" class="game-header-clone"></div>
+        <div class="gameover-trapezium-bg">
+            <div class="gameover-trap-white"></div>
+            <div class="gameover-trap-black"></div>
+        </div>
+        <div class="gameover-content">
+            <div class="gameover-box">
+                <div class="gameover-box-inner">
+                    <!-- GAME OVER title row -->
+                    <div class="gameover-title-row">
+                        <img src="firsthalfgameover.png" alt="" class="gameover-controller gameover-ctrl-left">
+                        <h1 class="gameover-title">GAME OVER</h1>
+                        <img src="secondhalfgameover.png" alt="" class="gameover-controller gameover-ctrl-right">
+                    </div>
+                    <!-- FINAL SCORES subtitle -->
+                    <h2 class="gameover-subtitle">FINAL SCORES</h2>
+                    <!-- Winner box -->
+                    <div class="gameover-winner-box" id="gameover-winner-box">
+                        <img src="trophy.png" alt="Trophy" class="gameover-trophy">
+                        <div class="gameover-winner-info">
+                            <span class="gameover-winner-label" id="gameover-winner-name">Player 1</span>
+                            <span class="gameover-winner-pts" id="gameover-winner-pts">25 pts</span>
+                            <span class="gameover-winner-note" id="gameover-winner-note"></span>
+                        </div>
+                    </div>
+                    <!-- Loser box -->
+                    <div class="gameover-loser-box" id="gameover-loser-box">
+                        <div class="gameover-loser-info">
+                            <span class="gameover-loser-label" id="gameover-loser-name">Player 2</span>
+                            <span class="gameover-loser-pts" id="gameover-loser-pts">15 pts</span>
+                            <span class="gameover-loser-note" id="gameover-loser-note"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Play Again button floats half-out of outer box -->
+                <button id="play-again-btn" class="gameover-play-again-btn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 5 Popup Overlay -->
+    <div id="card5-popup-overlay" class="card-popup-overlay hidden">
+        <div class="card-popup-content">
+            <img src="badge-5.png" alt="Badge" class="popup-badge popup-badge-left" />
+            <div class="popup-card-container popup-card-5">
+                <img src="card-level-5.png" alt="Level 5 Card" class="popup-card-image" />
+            </div>
+            <img src="badge-5.png" alt="Badge" class="popup-badge popup-badge-right" />
+        </div>
+    </div>
+
+    <!-- Card 4 Popup Overlay -->
+    <div id="card4-popup-overlay" class="card-popup-overlay hidden">
+        <div class="card-popup-content">
+            <img src="badge-4.png" alt="Badge" class="popup-badge popup-badge-left popup-badge-pink" />
+            <div class="popup-card-container popup-card-4">
+                <img src="card-level-4.png" alt="Level 4 Card" class="popup-card-image" />
+            </div>
+            <img src="badge-4.png" alt="Badge" class="popup-badge popup-badge-right popup-badge-pink" />
+        </div>
+    </div>
+
+    <!-- Card 3 Popup Overlay -->
+    <div id="card3-popup-overlay" class="card-popup-overlay hidden">
+        <div class="card-popup-content">
+            <img src="badge-3.png" alt="Badge" class="popup-badge popup-badge-left popup-badge-purple" />
+            <div class="popup-card-container popup-card-3">
+                <img src="card-level-3.png" alt="Level 3 Card" class="popup-card-image" />
+            </div>
+            <img src="badge-3.png" alt="Badge" class="popup-badge popup-badge-right popup-badge-purple" />
+        </div>
+    </div>
+
+    <!-- Card 2 Popup Overlay -->
+    <div id="card2-popup-overlay" class="card-popup-overlay hidden">
+        <div class="card-popup-content">
+            <img src="badge-2.png" alt="Badge" class="popup-badge popup-badge-left popup-badge-white" />
+            <div class="popup-card-container popup-card-2">
+                <img src="card-level-2.png" alt="Level 2 Card" class="popup-card-image" />
+            </div>
+            <img src="badge-2.png" alt="Badge" class="popup-badge popup-badge-right popup-badge-white" />
+        </div>
+    </div>
+
+    <!-- Card 1 Popup Overlay -->
+    <div id="card1-popup-overlay" class="card-popup-overlay hidden">
+        <div class="card-popup-content">
+            <img src="badge-1.png" alt="Badge" class="popup-badge popup-badge-left popup-badge-red" />
+            <div class="popup-card-container popup-card-1">
+                <img src="card-level-1.png" alt="Level 1 Card" class="popup-card-image" />
+            </div>
+            <img src="badge-1.png" alt="Badge" class="popup-badge popup-badge-right popup-badge-red" />
+        </div>
+    </div>
+
+    <!-- Card 5 Victory Cutscene Video Overlay -->
+    <div id="card5-video-overlay" class="video-overlay hidden">
+        <video id="card5-victory-video" class="fullscreen-video" playsinline>
+            <source src="card5-victory-cutscene.mp4" type="video/mp4">
+        </video>
+        <button id="skip-video-btn" class="skip-video-btn">Skip ▶</button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+    
+    <!-- Game Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="game.js"></script>
+    
+    <!-- Auth & Lobby Logic -->
+    <script>
+        // IMMEDIATE teacher check - block teachers as early as possible
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isQuizMode = urlParams.get('mode') === 'quiz';
+            
+            // If not in quiz mode, check if user is a teacher and redirect immediately
+            if (!isQuizMode) {
+                const checkTeacher = setInterval(async () => {
+                    if (typeof auth !== 'undefined' && auth.currentUser) {
+                        clearInterval(checkTeacher);
+                        try {
+                            const userData = await getUserByUid(auth.currentUser.uid);
+                            if (userData && userData.role === 'admin') {
+                                window.location.replace('admin-dashboard.html');
+                            } else if (userData && userData.role === 'teacher') {
+                                window.location.replace('teacher-dashboard.html');
+                            }
+                        } catch (e) { console.log('Teacher check error:', e); }
+                    }
+                }, 100);
+                
+                // Stop checking after 5 seconds to avoid infinite loop
+                setTimeout(() => clearInterval(checkTeacher), 5000);
+            }
+        })();
+        
+        // Player 2 verification state
+        let player2Verified = false;
+        let player2Data = null;
+
+        // Quiz lobby params (partner selection before quiz starts)
+        const lobbyParams = new URLSearchParams(window.location.search);
+        const quizModeParam = lobbyParams.get('mode') === 'quiz';
+        const quizIdParam = lobbyParams.get('quiz');
+        const classroomIdParam = lobbyParams.get('classroom');
+        const sessionIdParam = lobbyParams.get('session');
+        const hasPreloadedCardsParam = !!(lobbyParams.get('p1cards') && lobbyParams.get('p2cards'));
+        const isQuizPartnerLobby = quizModeParam && !!quizIdParam && !!classroomIdParam && !sessionIdParam && !hasPreloadedCardsParam;
+        const isPostQuizBattleLobby = quizModeParam && !!sessionIdParam && hasPreloadedCardsParam;
+        window.lockedQuizPlayer2 = isPostQuizBattleLobby;
+        
+        // Profile picture state (same interaction pattern as student dashboard)
+        let cropTarget = null; // 'p1' | 'p2'
+        let pfpCropper = null;
+        let pfpLoaded = false;
+        
+        // Initialize auth state listener
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for Firebase to initialize
+            setTimeout(() => {
+                if (auth) {
+                    auth.onAuthStateChanged(handleAuthStateChanged);
+                } else {
+                    const checkAuth = setInterval(() => {
+                        if (auth) {
+                            clearInterval(checkAuth);
+                            auth.onAuthStateChanged(handleAuthStateChanged);
+                        }
+                    }, 100);
+                }
+            }, 500);
+            
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                if (auth) {
+                    auth.signOut().then(() => {
+                        window.location.href = 'login.html';
+                    });
+                }
+            });
+            
+            // Enter key for player 2 input
+            document.getElementById('player2-name-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    verifyPlayer2();
+                }
+            });
+
+            if (isQuizPartnerLobby) {
+                const startBtn = document.getElementById('start-game-btn');
+                startBtn.textContent = 'START QUIZ';
+
+                // Intercept game start and launch quiz session first
+                startBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    await startQuizSessionFromLobby();
+                }, true);
+            }
+
+            if (isPostQuizBattleLobby) {
+                lockPostQuizLobbyUi();
+                hydratePostQuizPlayer2();
+            }
+            
+            // Hamburger menu toggle
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const hamburgerDropdown = document.getElementById('hamburger-dropdown');
+            hamburgerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hamburgerDropdown.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (!hamburgerDropdown.contains(e.target) && e.target !== hamburgerBtn) {
+                    hamburgerDropdown.classList.remove('open');
+                }
+            });
+            
+            // Game screen hamburger menu toggle
+            const gameHamburgerBtn = document.getElementById('game-hamburger-btn');
+            const gameHamburgerDropdown = document.getElementById('game-hamburger-dropdown');
+            if (gameHamburgerBtn && gameHamburgerDropdown) {
+                gameHamburgerBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    gameHamburgerDropdown.classList.toggle('open');
+                });
+                document.addEventListener('click', (e) => {
+                    if (!gameHamburgerDropdown.contains(e.target) && e.target !== gameHamburgerBtn) {
+                        gameHamburgerDropdown.classList.remove('open');
+                    }
+                });
+            }
+            
+            // Game screen logout button
+            const gameLogoutBtn = document.getElementById('game-logout-btn');
+            if (gameLogoutBtn) {
+                gameLogoutBtn.addEventListener('click', () => {
+                    if (auth) {
+                        auth.signOut().then(() => {
+                            window.location.href = 'login.html';
+                        });
+                    }
+                });
+            }
+            
+            // Header avatar click matches student dashboard behavior (go to dashboard)
+            document.getElementById('header-profile').addEventListener('click', () => {
+                window.location.href = 'student-dashboard.html';
+            });
+
+            // Profile picture upload triggers
+            document.getElementById('p1-profile-plus').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openCropModal('p1');
+            });
+            document.getElementById('p1-profile-wrapper').addEventListener('click', () => openCropModal('p1'));
+            
+            // Player 2 profile picture upload triggers (attached after verify)
+            setupP2ProfileListeners();
+            
+            // Crop modal controls
+            document.getElementById('crop-close-btn').addEventListener('click', closeCropModal);
+            document.getElementById('crop-load-btn').addEventListener('click', loadPfpFromUrl);
+            document.getElementById('crop-file-input').addEventListener('change', loadPfpFromFile);
+            document.getElementById('crop-confirm-btn').addEventListener('click', confirmCrop);
+
+            document.getElementById('crop-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'crop-modal') closeCropModal();
+            });
+            
+            // Profile pic will be loaded from Firebase in handleAuthStateChanged
+        });
+        
+        async function handleAuthStateChanged(user) {
+            if (user) {
+                currentUser = user;
+                
+                try {
+                    const userData = await getUserByUid(user.uid);
+                    currentUserData = userData;
+
+                    if (!userData || userData.isDeleted === true || userData.status === 'deleted') {
+                        try {
+                            if (auth && auth.currentUser) {
+                                await auth.signOut();
+                            }
+                        } catch (signOutError) {
+                            console.warn('Could not sign out deleted account:', signOutError);
+                        }
+                        window.location.href = 'login.html?deleted=1';
+                        return;
+                    }
+                    
+                    // Check if user is a teacher - redirect to teacher dashboard
+                    // Teachers cannot play the game (unless in quiz mode which bypasses this)
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const isQuizMode = urlParams.get('mode') === 'quiz';
+                    
+                    if (userData?.role === 'admin' && !isQuizMode) {
+                        window.location.href = 'admin-dashboard.html';
+                        return;
+                    }
+
+                    if (userData?.role === 'teacher' && !isQuizMode) {
+                        window.location.href = 'teacher-dashboard.html';
+                        return;
+                    }
+
+                    const dashboardLink = document.getElementById('dashboard-link');
+                    if (dashboardLink) {
+                        if (userData?.role === 'admin') {
+                            dashboardLink.href = 'admin-dashboard.html';
+                        } else if (userData?.role === 'teacher') {
+                            dashboardLink.href = 'teacher-dashboard.html';
+                        } else {
+                            dashboardLink.href = 'student-dashboard.html';
+                        }
+                    }
+
+                    const gameDashboardLink = document.getElementById('game-dashboard-link');
+                    if (gameDashboardLink) {
+                        if (userData?.role === 'admin') {
+                            gameDashboardLink.href = 'admin-dashboard.html';
+                        } else if (userData?.role === 'teacher') {
+                            gameDashboardLink.href = 'teacher-dashboard.html';
+                        } else {
+                            gameDashboardLink.href = 'student-dashboard.html';
+                        }
+                    }
+
+                    const classroomLink = document.getElementById('classroom-link');
+                    const gameClassroomLink = document.getElementById('game-classroom-link');
+                    let classroomHref = 'student-dashboard.html';
+
+                    if (userData?.role === 'teacher') {
+                        const teacherClasses = await getTeacherClassrooms(user.uid);
+                        classroomHref = teacherClasses.length > 0 && teacherClasses[0]?.id
+                            ? `classroom.html?id=${teacherClasses[0].id}`
+                            : 'teacher-dashboard.html';
+                    } else if (userData?.role === 'student') {
+                        if (classroomIdParam) {
+                            classroomHref = `classroom.html?id=${classroomIdParam}`;
+                        } else {
+                            const studentClasses = await getStudentClassrooms(user.uid);
+                            classroomHref = studentClasses.length > 0 && studentClasses[0]?.id
+                                ? `classroom.html?id=${studentClasses[0].id}`
+                                : 'student-dashboard.html';
+                        }
+                    } else if (userData?.role === 'admin') {
+                        classroomHref = 'admin-class-management.html';
+                    }
+
+                    if (classroomLink) classroomLink.href = classroomHref;
+                    if (gameClassroomLink) gameClassroomLink.href = classroomHref;
+                    
+                    const displayName = userData?.displayName || user.displayName || 'Player';
+                    const wins = userData?.wins || 0;
+                    const losses = userData?.losses || 0;
+                    
+                    // Update lobby UI
+                    document.getElementById('p1-name-display').textContent = displayName;
+                    document.getElementById('player1-name').value = displayName;
+                    document.getElementById('player1-uid').value = user.uid;
+                    document.getElementById('header-username').textContent = displayName;
+                    
+                    // Set avatar letter
+                    const initial = displayName.charAt(0).toUpperCase();
+                    
+                    // Also update game screen header
+                    const gameUsername = document.getElementById('game-username');
+                    const gameAvatarLetter = document.getElementById('game-avatar-letter');
+                    if (gameUsername) gameUsername.textContent = displayName;
+                    if (gameAvatarLetter) gameAvatarLetter.textContent = initial;
+                    
+                    // Set Player 1 stats
+                    document.getElementById('p1-wins').textContent = wins;
+                    document.getElementById('p1-losses').textContent = losses;
+                    
+                    // Load profile pic from Firebase only
+                    const firebasePic = userData?.profilePicture || null;
+                    if (firebasePic) {
+                        cropTarget = 'p1';
+                        applyProfilePic(firebasePic, 'p1');
+                    } else {
+                        // Use default profile picture
+                        document.getElementById('p1-profile-pic').src = 'userprofiledefault.png';
+                        document.getElementById('header-avatar-img').src = 'userprofiledefault.png';
+                    }
+                    
+                } catch (e) {
+                    console.error('Error getting user data:', e);
+                    const displayName = user.displayName || 'Player';
+                    document.getElementById('p1-name-display').textContent = displayName;
+                    document.getElementById('player1-name').value = displayName;
+                    document.getElementById('player1-uid').value = user.uid;
+                    document.getElementById('header-username').textContent = displayName;
+                    document.getElementById('header-avatar-img').src = 'userprofiledefault.png';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+        
+        async function verifyPlayer2() {
+            const nameInput = document.getElementById('player2-name-input');
+            const statusDiv = document.getElementById('player2-status');
+            const verifyBtn = document.getElementById('verify-btn');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                statusDiv.textContent = 'Please enter a name';
+                statusDiv.className = 'player2-status error';
+                return;
+            }
+            
+            const p1Name = document.getElementById('player1-name').value;
+            if (name.toLowerCase() === p1Name.toLowerCase()) {
+                statusDiv.textContent = 'You cannot play against yourself!';
+                statusDiv.className = 'player2-status error';
+                return;
+            }
+            
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Checking...';
+            statusDiv.textContent = 'Looking up player...';
+            statusDiv.className = 'player2-status';
+            
+            try {
+                const user = await findUserByDisplayName(name);
+                
+                if (user) {
+                    if (isQuizPartnerLobby) {
+                        if (user.role !== 'student') {
+                            statusDiv.textContent = 'Only students can be selected for a quiz session.';
+                            statusDiv.className = 'player2-status error';
+                            verifyBtn.disabled = false;
+                            verifyBtn.textContent = 'Verify';
+                            return;
+                        }
+
+                        const enrolled = await isUserEnrolledInClassroom(classroomIdParam, user.id || user.uid);
+                        if (!enrolled) {
+                            statusDiv.textContent = 'Student is not enrolled in this classroom.';
+                            statusDiv.className = 'player2-status error';
+                            verifyBtn.disabled = false;
+                            verifyBtn.textContent = 'Verify';
+                            return;
+                        }
+                    }
+
+                    player2Verified = true;
+                    player2Data = user;
+                    
+                    const p2Wins = user.wins || 0;
+                    const p2Losses = user.losses || 0;
+                    
+                    document.getElementById('player2-name').value = user.displayName;
+                    document.getElementById('player2-uid').value = user.id || user.uid;
+                    
+                    document.getElementById('player2-input-section').style.display = 'none';
+                    document.getElementById('player2-verified-section').style.display = 'block';
+                    document.getElementById('p2-verified-name').textContent = user.displayName;
+                    document.getElementById('p2-wins').textContent = p2Wins;
+                    document.getElementById('p2-losses').textContent = p2Losses;
+                    
+                    // Show verified text
+                    statusDiv.textContent = 'User verified';
+                    statusDiv.className = 'player2-status success';
+                    
+                    document.getElementById('start-game-btn').disabled = false;
+                    
+                    // Load Player 2 profile pic from Firebase
+                    const p2Uid = user.id || user.uid;
+                    if (p2Uid) {
+                        try {
+                            const p2Pic = await getProfilePicture(p2Uid);
+                            if (p2Pic) {
+                                document.getElementById('p2-profile-pic').src = p2Pic;
+                            }
+                        } catch (picErr) {
+                            console.warn('Could not load P2 profile pic:', picErr);
+                        }
+                    }
+                    
+                } else {
+                    statusDiv.textContent = 'User is not verified. Please only enter a username that is already registered.';
+                    statusDiv.className = 'player2-status error';
+                }
+            } catch (e) {
+                console.error('Error verifying player 2:', e);
+                statusDiv.textContent = 'Error looking up player. Please try again.';
+                statusDiv.className = 'player2-status error';
+            }
+            
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = 'Verify';
+        }
+
+        async function startQuizSessionFromLobby() {
+            const statusDiv = document.getElementById('player2-status');
+            const startBtn = document.getElementById('start-game-btn');
+
+            if (!isQuizPartnerLobby) return;
+
+            if (!player2Verified || !player2Data) {
+                statusDiv.textContent = 'Verify your opponent first.';
+                statusDiv.className = 'player2-status error';
+                return;
+            }
+
+            if (!currentUser || !currentUserData) {
+                statusDiv.textContent = 'Please wait for your account to finish loading.';
+                statusDiv.className = 'player2-status error';
+                return;
+            }
+
+            const opponentUid = player2Data.id || player2Data.uid;
+            const opponentName = player2Data.displayName || document.getElementById('player2-name').value.trim();
+            if (!opponentUid || !opponentName) {
+                statusDiv.textContent = 'Invalid opponent selection. Verify again.';
+                statusDiv.className = 'player2-status error';
+                return;
+            }
+
+            startBtn.disabled = true;
+            startBtn.textContent = 'STARTING...';
+
+            try {
+                const session = await createQuizSession(
+                    quizIdParam,
+                    currentUser.uid,
+                    currentUserData.displayName || document.getElementById('player1-name').value.trim() || 'Player 1',
+                    opponentUid,
+                    opponentName
+                );
+
+                window.location.href = `quiz-play.html?session=${session.id}&quiz=${quizIdParam}&classroom=${classroomIdParam}`;
+            } catch (error) {
+                console.error('Error creating quiz session from lobby:', error);
+                statusDiv.textContent = 'Failed to start quiz session. Please try again.';
+                statusDiv.className = 'player2-status error';
+                startBtn.disabled = false;
+                startBtn.textContent = 'START QUIZ';
+            }
+        }
+        
+        function resetPlayer2() {
+            if (window.lockedQuizPlayer2) {
+                const statusDiv = document.getElementById('player2-status');
+                if (statusDiv) {
+                    statusDiv.textContent = 'Player 2 is locked from quiz session results.';
+                    statusDiv.className = 'player2-status';
+                }
+                return;
+            }
+
+            player2Verified = false;
+            player2Data = null;
+            
+            document.getElementById('player2-name').value = '';
+            document.getElementById('player2-uid').value = '';
+            document.getElementById('player2-name-input').value = '';
+            
+            document.getElementById('player2-input-section').style.display = 'block';
+            document.getElementById('player2-verified-section').style.display = 'none';
+            document.getElementById('player2-status').textContent = '';
+            
+            document.getElementById('start-game-btn').disabled = true;
+        }
+
+        function lockPostQuizLobbyUi() {
+            const p2InputSection = document.getElementById('player2-input-section');
+            const p2VerifiedSection = document.getElementById('player2-verified-section');
+            const changeBtn = document.querySelector('.lobby-change-btn');
+            const p2Plus = document.getElementById('p2-profile-plus');
+            const p2Wrapper = document.getElementById('p2-profile-wrapper');
+            const p2LockBadge = document.getElementById('p2-lock-badge');
+            const statusDiv = document.getElementById('player2-status');
+            const startBtn = document.getElementById('start-game-btn');
+
+            if (p2InputSection) p2InputSection.style.display = 'none';
+            if (p2VerifiedSection) p2VerifiedSection.style.display = 'block';
+            if (changeBtn) changeBtn.style.display = 'none';
+            if (p2Plus) p2Plus.style.display = 'none';
+            if (p2Wrapper) p2Wrapper.style.pointerEvents = 'none';
+            if (p2LockBadge) p2LockBadge.style.display = 'inline-flex';
+            if (startBtn) startBtn.disabled = false;
+
+            if (statusDiv) {
+                statusDiv.textContent = 'Player 2 locked from quiz session.';
+                statusDiv.className = 'player2-status success';
+            }
+        }
+
+        async function hydratePostQuizPlayer2() {
+            const p2NameParam = lobbyParams.get('p2name');
+            const p2UidParam = lobbyParams.get('p2uid');
+            const p2Name = p2NameParam || '';
+            const p2Uid = p2UidParam || '';
+
+            if (p2Name) {
+                const p2VerifiedName = document.getElementById('p2-verified-name');
+                const p2NameInput = document.getElementById('player2-name');
+                if (p2VerifiedName) p2VerifiedName.textContent = p2Name;
+                if (p2NameInput) p2NameInput.value = p2Name;
+            }
+
+            if (p2Uid) {
+                const p2UidInput = document.getElementById('player2-uid');
+                if (p2UidInput) p2UidInput.value = p2Uid;
+            }
+
+            player2Verified = true;
+            player2Data = {
+                displayName: p2Name || document.getElementById('player2-name').value || 'Player 2',
+                id: p2Uid || null,
+                uid: p2Uid || null
+            };
+
+            try {
+                if (p2Uid && typeof getUserByUid === 'function') {
+                    const p2User = await getUserByUid(p2Uid);
+                    if (p2User) {
+                        document.getElementById('p2-wins').textContent = p2User.wins || 0;
+                        document.getElementById('p2-losses').textContent = p2User.losses || 0;
+
+                        if (p2User.displayName) {
+                            const p2VerifiedName = document.getElementById('p2-verified-name');
+                            if (p2VerifiedName) p2VerifiedName.textContent = p2User.displayName;
+                            document.getElementById('player2-name').value = p2User.displayName;
+                        }
+                    }
+                }
+
+                if (p2Uid && typeof getProfilePicture === 'function') {
+                    const p2Pic = await getProfilePicture(p2Uid);
+                    if (p2Pic) {
+                        document.getElementById('p2-profile-pic').src = p2Pic;
+                    }
+                }
+            } catch (error) {
+                console.warn('Could not fully hydrate locked P2 info:', error);
+            }
+        }
+        
+        function getInitials(name) {
+            return name ? name.charAt(0).toUpperCase() : '?';
+        }
+        
+        // ========================================
+        // PROFILE PICTURE CROP FUNCTIONALITY
+        // ========================================
+        
+        function openCropModal(target) {
+            cropTarget = target;
+            preparePfpModal();
+            const modal = document.getElementById('crop-modal');
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+        
+        function closeCropModal() {
+            const modal = document.getElementById('crop-modal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            teardownPfpCropper();
+        }
+
+        function preparePfpModal() {
+            pfpLoaded = false;
+            document.getElementById('crop-url').value = '';
+            document.getElementById('crop-file-input').value = '';
+            document.getElementById('crop-shell').style.display = 'none';
+            teardownPfpCropper();
+        }
+
+        function teardownPfpCropper() {
+            if (pfpCropper) {
+                try { pfpCropper.destroy(); } catch (_e) {}
+                pfpCropper = null;
+            }
+        }
+
+        function loadPfpFromFile(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => loadImageIntoCropper(reader.result);
+            reader.readAsDataURL(file);
+        }
+
+        function loadPfpFromUrl() {
+            const url = document.getElementById('crop-url').value.trim();
+            if (!url) return alert('Please paste an image URL.');
+            loadImageIntoCropper(url);
+        }
+
+        function loadImageIntoCropper(src) {
+            const img = document.getElementById('crop-preview-img');
+            const shell = document.getElementById('crop-shell');
+            shell.style.display = 'block';
+            img.src = src;
+            img.onload = () => {
+                teardownPfpCropper();
+                pfpCropper = new Cropper(img, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 1,
+                    background: false,
+                    guides: false,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
+                    toggleDragModeOnDblclick: false
+                });
+                pfpLoaded = true;
+            };
+            img.onerror = () => {
+                shell.style.display = 'none';
+                pfpLoaded = false;
+                alert('Unable to load that image. Try another URL or upload a file.');
+            };
+        }
+
+        function confirmCrop() {
+            if (!pfpCropper || !pfpLoaded) return alert('Please load an image first.');
+            const canvas = pfpCropper.getCroppedCanvas({ width: 400, height: 400, imageSmoothingQuality: 'high' });
+            const dataUrl = canvas.toDataURL('image/png');
+
+            if (cropTarget === 'p2') {
+                const p2Uid = document.getElementById('player2-uid').value;
+                if (p2Uid && typeof saveProfilePicture === 'function') {
+                    saveProfilePicture(p2Uid, dataUrl).catch(e => console.warn('Could not save P2 pic:', e));
+                }
+            } else if (currentUser && typeof saveProfilePicture === 'function') {
+                saveProfilePicture(currentUser.uid, dataUrl).catch(e => console.warn('Could not save P1 pic:', e));
+            }
+
+            applyProfilePic(dataUrl, cropTarget);
+            closeCropModal();
+        }
+        
+        function applyProfilePic(dataUrl, target) {
+            if (target === 'p2') {
+                // Player 2 profile pic only
+                document.getElementById('p2-profile-pic').src = dataUrl;
+            } else {
+                // Header avatar
+                const headerImg = document.getElementById('header-avatar-img');
+                headerImg.src = dataUrl;
+                
+                // Player 1 profile pic
+                document.getElementById('p1-profile-pic').src = dataUrl;
+                
+                // Game screen avatar
+                const gameAvatarImg = document.getElementById('game-avatar-img');
+                const gameAvatarLetter = document.getElementById('game-avatar-letter');
+                if (gameAvatarImg) {
+                    gameAvatarImg.src = dataUrl;
+                    gameAvatarImg.style.display = 'block';
+                    if (gameAvatarLetter) gameAvatarLetter.style.display = 'none';
+                }
+            }
+        }
+        
+        function setupP2ProfileListeners() {
+            const p2Plus = document.getElementById('p2-profile-plus');
+            const p2Wrapper = document.getElementById('p2-profile-wrapper');
+            if (p2Plus) {
+                p2Plus.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openCropModal('p2');
+                });
+            }
+            if (p2Wrapper) {
+                p2Wrapper.addEventListener('click', () => openCropModal('p2'));
+            }
+        }
+    </script>
+</body>
+</html>

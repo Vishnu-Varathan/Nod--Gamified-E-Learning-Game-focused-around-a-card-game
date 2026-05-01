@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - Teacher Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Iceberg&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:'Inter',sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(72,255,0,.08), transparent 36%),
+                radial-gradient(circle at 90% 0%, rgba(77,0,255,.14), transparent 42%),
+                #0a0a0a;
+            color:#fff;
+        }
+        .header{
+            position:sticky;
+            top:0;
+            z-index:90;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:14px 26px;
+            background:rgba(17,17,17,.92);
+            border-bottom:1px solid #222;
+            backdrop-filter:blur(8px);
+        }
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo img{height:36px}
+        .logo span{font-family:'Iceberg',cursive;color:#48FF00;font-size:24px}
+        .header-right{display:flex;align-items:center;gap:10px}
+        .header-profile{
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            padding:6px 10px;
+            border-radius:12px;
+            border:1px solid #333;
+            background:rgba(255,255,255,.02);
+            color:#fff;
+            cursor:pointer;
+            transition:all .2s ease;
+        }
+        .header-profile:hover{border-color:#48FF00;color:#48FF00}
+        .header-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            border:1px solid #3a3a3a;
+            object-fit:cover;
+            background:#0f0f0f;
+        }
+        .header-name{font-weight:700;font-size:14px}
+        .btn{
+            padding:10px 15px;
+            border-radius:10px;
+            border:1px solid #333;
+            background:rgba(255,255,255,.02);
+            color:#aaa;
+            min-height:40px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            line-height:1;
+            cursor:pointer;
+            font-weight:500;
+            transition:all .2s ease;
+        }
+        .btn:hover{border-color:#48FF00;color:#48FF00}
+        .btn-primary{
+            background:linear-gradient(135deg,#48FF00,#00c853);
+            border:none;
+            color:#000;
+            font-weight:700;
+            box-shadow:0 10px 22px rgba(72,255,0,.2);
+        }
+        .layout{display:flex;min-height:calc(100vh - 67px);position:relative}
+        .sidebar{
+            width:290px;
+            border-right:1px solid #222;
+            background:linear-gradient(180deg, rgba(17,17,17,.95), rgba(13,13,13,.95));
+            padding:18px;
+            box-shadow:inset -1px 0 0 rgba(255,255,255,.03);
+            transition:width .25s ease, padding .25s ease, opacity .25s ease;
+        }
+        .sidebar-edge-toggle{
+            position:absolute;
+            top:18px;
+            left:290px;
+            transform:translateX(-50%);
+            z-index:95;
+            width:34px;
+            height:34px;
+            border-radius:10px;
+            border:1px solid #333;
+            background:rgba(255,255,255,.04);
+            color:#fff;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            transition:all .2s ease;
+        }
+        .sidebar-edge-toggle:hover{border-color:#48FF00;color:#48FF00}
+        body.sidebar-collapsed .sidebar{width:0;padding:0;opacity:0;border:none;pointer-events:none}
+        body.sidebar-collapsed .sidebar-edge-toggle{left:0;transform:translateX(12px)}
+        .sidebar-title{font-size:11px;text-transform:uppercase;color:#666;letter-spacing:1px;margin-bottom:10px}
+        .menu-btn{
+            width:100%;
+            text-align:left;
+            padding:11px 12px;
+            border:1px solid #252525;
+            background:#151515;
+            color:#aaa;
+            border-radius:10px;
+            cursor:pointer;
+            margin-bottom:8px;
+            font-weight:600;
+            transition:all .2s ease;
+        }
+        .menu-btn:hover,.menu-btn.active{border-color:#48FF00;color:#48FF00}
+        .class-list{max-height:60vh;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:3px}
+        .class-list::-webkit-scrollbar{width:8px}
+        .class-list::-webkit-scrollbar-thumb{background:#2f2f2f;border-radius:10px}
+        .class-list.collapsed{display:none}
+        .class-link{
+            padding:11px 12px;
+            background:#0a0a0a;
+            border:1px solid #222;
+            border-radius:10px;
+            color:#aaa;
+            text-decoration:none;
+            display:block;
+            transition:all .2s ease;
+        }
+        .class-link:hover{border-color:#48FF00;color:#48FF00;transform:translateY(-1px)}
+        .class-link.archived{
+            color:#bda886;
+            border-color:#4d3f2b;
+            background:#1a140f;
+            cursor:not-allowed;
+            pointer-events:none;
+        }
+        .content{flex:1;padding:26px}
+        .content-shell{max-width:1160px}
+        .title-row{display:flex;align-items:center;flex-wrap:wrap;gap:30px;justify-content:flex-start;margin-bottom:6px}
+        .title{font-family:'Iceberg',cursive;color:#48FF00;font-size:36px;margin:0}
+        .subtitle{color:#8b8b8b;font-size:14px;line-height:1.45;margin-bottom:20px}
+        .btn svg{width:16px;height:16px;fill:currentColor;margin-right:6px}
+        .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:14px}
+        .tile{
+            background:linear-gradient(180deg,#171717,#131313);
+            border:1px solid #252525;
+            border-radius:14px;
+            padding:16px;
+            transition:all .2s ease;
+            box-shadow:0 12px 26px rgba(0,0,0,.25);
+        }
+        .tile:hover{border-color:#48FF00;transform:translateY(-2px)}
+        .tile h3{font-size:19px;margin-bottom:8px}
+        #classroom-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+        .classroom-card{
+            background:linear-gradient(160deg,#151515,#0f0f0f);
+            border:1px solid #1f1f1f;
+            border-radius:16px;
+            padding:14px 16px;
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+            box-shadow:0 16px 32px rgba(0,0,0,.35);
+            cursor:pointer;
+            transition:transform .2s ease,border-color .2s ease;
+            max-width: max-content;
+        }
+        .classroom-card:hover{transform:translateY(-2px);border-color:#48FF00}
+        .classroom-card.archived{
+            border-color:#4d3f2b;
+            background:linear-gradient(160deg,#1a1410,#13100d);
+            cursor:not-allowed;
+            opacity:.88;
+        }
+        .classroom-card.archived:hover{transform:none;border-color:#4d3f2b}
+        .archive-pill{
+            display:inline-flex;
+            margin-top:8px;
+            padding:4px 10px;
+            border-radius:999px;
+            border:1px solid #5a4a2f;
+            background:#2a2116;
+            color:#ffd696;
+            font-size:11px;
+            letter-spacing:.6px;
+            text-transform:uppercase;
+            font-weight:700;
+        }
+        .classroom-hero{display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:center}
+        .classroom-image{width:130px;height:130px;border-radius:16px;background:#d9d9d9;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .classroom-image img{width:100%;height:100%;object-fit:cover}
+        .classroom-image.placeholder{background:linear-gradient(135deg,#2b2b2b,#1a1a1a)}
+        .classroom-title{font-family:'Iceberg',cursive;font-size:26px;color:#48FF00;line-height:1.05}
+        .classroom-sub{font-size:18px;font-weight:800;font-style:italic;color:#f1f1f1;margin-top:4px;line-height:1.2}
+        .classroom-sub span{color:#dcdcdc;font-weight:700}
+        .classroom-footer{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+        .classroom-stats-row{display:flex;gap:10px;flex-wrap:wrap}
+        .stat-pill{min-width:120px;background:#0c0c0c;border:1px solid #1f1f1f;border-radius:14px;padding:10px 12px;text-align:center;box-shadow:0 10px 20px rgba(0,0,0,.35)}
+        .stat-number{font-size:28px;font-weight:800;color:#48FF00;line-height:1}
+        .stat-label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#8c8c8c;margin-top:4px}
+        .classroom-code-block{display:flex;align-items:center;gap:10px;background:#0c0c0c;border:1px solid #1f1f1f;border-radius:12px;padding:10px 12px;box-shadow:0 10px 20px rgba(0,0,0,.35)}
+        .code-label{font-family:'Iceberg',cursive;color:#dcdcdc;font-size:17px;letter-spacing:1px}
+        .code-value{font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:2px;color:#f5f5f5}
+        .copy-btn{border:1px solid #2b2b2b;background:#0c0c0c;color:#48FF00;border-radius:11px;padding:9px 11px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .2s ease;box-shadow:0 10px 20px rgba(0,0,0,.35)}
+        .copy-btn:hover{border-color:#48FF00;color:#48FF00}
+        .copy-btn svg{width:18px;height:18px;fill:currentColor}
+        .copy-btn.copied{border-color:#3a3a3a;background:#1a1a1a;color:#9c9c9c;box-shadow:none;cursor:default}
+        .copy-btn.copied svg{fill:currentColor}
+        @media (max-width: 920px){
+            .classroom-hero{grid-template-columns:140px 1fr}
+            .classroom-image{width:130px;height:130px}
+        }
+        @media (max-width: 720px){
+            #classroom-tiles{grid-template-columns:1fr}
+            .classroom-hero{grid-template-columns:1fr;justify-items:flex-start}
+            .classroom-footer{flex-direction:column;align-items:flex-start}
+        }
+        .muted{color:#8b8b8b;font-size:13px;line-height:1.45}
+        .actions{display:flex;gap:8px;margin-top:12px;align-items:center}
+        .actions .btn{text-decoration:none}
+
+        .profile-card{
+            background:linear-gradient(145deg, rgba(22,22,22,.95), rgba(15,15,15,.95));
+            border:1px solid #262626;
+            border-radius:18px;
+            padding:16px;
+            margin:0 0 18px;
+            box-shadow:0 18px 40px rgba(0,0,0,.35);
+        }
+        .profile-row{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+        .pfp-wrap{position:relative;width:92px}
+        .pfp-img{width:92px;height:92px;border-radius:50%;object-fit:cover;border:1px solid #333;background:#0a0a0a}
+        .pfp-edit{
+            position:absolute;
+            left:50%;
+            bottom:-8px;
+            transform:translateX(-50%);
+            width:34px;
+            height:34px;
+            border-radius:50%;
+            border:1px solid #333;
+            background:#0a0a0a;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            transition:all .2s ease;
+        }
+        .pfp-edit:hover{border-color:#48FF00}
+        .pfp-edit svg{width:18px;height:18px;fill:#aaa}
+        .pfp-edit:hover svg{fill:#48FF00}
+        .profile-meta{flex:1;min-width:220px}
+        .name-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+        .profile-name{font-size:22px;font-weight:800;line-height:1.1}
+        .profile-role{margin-top:4px;color:#48FF00;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.6px}
+        .profile-line{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+        .profile-label{color:#888;font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+        .profile-value{color:#fff;font-size:14px}
+        .profile-hash{font-family:'IBM Plex Mono',monospace;color:#aaa}
+        .icon-btn{
+            border:1px solid #333;
+            background:rgba(255,255,255,.02);
+            width:34px;
+            height:34px;
+            border-radius:10px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            transition:all .2s ease;
+        }
+        .icon-btn:hover{border-color:#48FF00}
+        .icon-btn svg{width:18px;height:18px;fill:#aaa}
+        .icon-btn:hover svg{fill:#48FF00}
+
+        .modal-actions{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
+        .help{color:#8b8b8b;font-size:12px;line-height:1.35;margin-top:8px}
+        .crop-shell{margin-top:10px;border:1px solid #252525;border-radius:12px;background:#0a0a0a;padding:10px}
+        .crop-shell img{max-width:100%;display:block;max-height:320px;margin:0 auto;border-radius:12px}
+        .cropper-view-box,.cropper-face{border-radius:50%}
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);justify-content:center;align-items:center;padding:16px;z-index:200}
+        .modal-overlay.active{display:flex}
+        .modal{
+            width:100%;
+            max-width:540px;
+            background:linear-gradient(145deg, rgba(22,22,22,.97), rgba(16,16,16,.97));
+            border:1px solid #333;
+            border-radius:14px;
+            padding:18px;
+            box-shadow:0 20px 45px rgba(0,0,0,.45);
+        }
+        .modal-title{font-size:22px;margin-bottom:10px;color:#48FF00;font-family:'Iceberg',cursive}
+        .field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+        .field label{font-size:13px;color:#b8b8b8}
+        .field input,.field textarea{
+            padding:11px 12px;
+            border-radius:10px;
+            border:1px solid #333;
+            background:#0a0a0a;
+            color:#fff;
+            transition:border-color .2s, box-shadow .2s;
+        }
+        .field input:focus,.field textarea:focus{outline:none;border-color:#48FF00;box-shadow:0 0 0 2px rgba(72,255,0,.12)}
+        @media (max-width: 1024px){
+            .content{padding:20px}
+            .title{font-size:34px}
+            .tiles{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+        }
+        @media (max-width: 900px){
+            .layout{flex-direction:column}
+            .sidebar{width:100%;border-right:none;border-bottom:1px solid #222}
+            .class-list{max-height:220px}
+            .content{padding:16px}
+        }
+        @media (max-width: 768px){
+            .header{padding:12px 14px}
+            .header-right{gap:8px}
+            .title{font-size:32px}
+            .tiles{grid-template-columns:1fr}
+            .btn{padding:10px 12px}
+        }
+        @media (max-width: 480px){
+            .logo span{font-size:22px}
+            .header-right{width:100%;justify-content:flex-end;flex-wrap:wrap}
+            .content{padding:12px}
+            .modal{padding:14px}
+            .field input,.field textarea{padding:10px}
+        }
+        @media (max-width: 360px){
+            .header-right .btn{width:100%}
+            .menu-btn,.class-link{padding:10px}
+            .title{font-size:28px}
+            .modal-title{font-size:20px}
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="logo"><img src="Untitled 1.png" alt="NOD"><span>NOD</span></div>
+    <div class="header-right">
+        <button class="header-profile" id="header-profile" type="button" aria-label="Open profile">
+            <img id="header-pic" class="header-avatar" src="userprofiledefault.png" alt="Profile picture">
+            <span id="header-name" class="header-name">Loading...</span>
+        </button>
+        <button class="btn" id="logout-btn">Logout</button>
+    </div>
+</header>
+
+<div class="layout">
+    <button class="sidebar-edge-toggle" id="sidebar-edge-toggle" type="button" aria-label="Toggle sidebar">◀</button>
+    <aside class="sidebar">
+        <div class="sidebar-title">Menu</div>
+        <button class="menu-btn active">My Classrooms</button>
+        <button class="menu-btn" id="toggle-classrooms">▾ Your Classrooms</button>
+        <div class="class-list" id="sidebar-classrooms"></div>
+    </aside>
+
+    <main class="content">
+        <div class="content-shell">
+            <section class="profile-card" aria-label="Profile" id="profile-section">
+                <div class="profile-row">
+                    <div class="pfp-wrap">
+                        <img id="profile-pic" class="pfp-img" src="userprofiledefault.png" alt="Profile picture">
+                        <button class="pfp-edit" id="edit-photo-btn" type="button" title="Edit profile photo" aria-label="Edit profile photo">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm9 1.5v8A3.5 3.5 0 0 1 17.5 22h-11A3.5 3.5 0 0 1 3 18.5v-8A3.5 3.5 0 0 1 6.5 7h1.2l1.1-1.6A2.5 2.5 0 0 1 10.9 4h2.2a2.5 2.5 0 0 1 2.1 1.4L16.3 7h1.2A3.5 3.5 0 0 1 21 10.5ZM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg>
+                        </button>
+                    </div>
+                    <div class="profile-meta">
+                        <div class="name-row">
+                            <div class="profile-name" id="profile-username">Loading...</div>
+                            <button class="icon-btn" id="edit-username-btn" type="button" title="Edit username" aria-label="Edit username">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm2.92 2.83H5v-.92l8.06-8.06.92.92L5.92 20.08ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>
+                            </button>
+                        </div>
+                        <div class="profile-role" id="profile-role">teacher</div>
+                        <div class="profile-line">
+                            <span class="profile-label">Email</span>
+                            <span class="profile-value" id="profile-email">Loading...</span>
+                            <button class="icon-btn" id="edit-email-btn" type="button" title="Edit email" aria-label="Edit email">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm2.92 2.83H5v-.92l8.06-8.06.92.92L5.92 20.08ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>
+                            </button>
+                        </div>
+                        <div class="profile-line">
+                            <span class="profile-label">Password</span>
+                            <span class="profile-value profile-hash" id="profile-password">******** (hashed)</span>
+                            <button class="icon-btn" id="edit-password-btn" type="button" title="Change password" aria-label="Change password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm2.92 2.83H5v-.92l8.06-8.06.92.92L5.92 20.08ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="title-row">
+                <h1 class="title">My Classrooms</h1>
+                <button class="btn btn-primary" id="open-create-class" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v16h-2zM4 11h16v2H4z"/></svg>
+                    <span>Create</span>
+                </button>
+            </div>
+            <p class="subtitle">Create classrooms, manage access, and launch quiz battles in one place.</p>
+            <div class="tiles" id="classroom-tiles"></div>
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="create-modal">
+    <div class="modal">
+        <h3 class="modal-title">Create Classroom</h3>
+        <div class="field"><label>Name *</label><input id="class-name" maxlength="100"></div>
+        <div class="field"><label>Description</label><textarea id="class-desc" rows="3"></textarea></div>
+        <div class="field"><label>Subject</label><input id="class-subject" maxlength="100"></div>
+        <div class="field"><label>Profile Picture URL (optional)</label><input id="class-pfp"></div>
+        <div class="actions">
+            <button class="btn" id="cancel-create">Cancel</button>
+            <button class="btn btn-primary" id="create-btn">Create</button>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Modals -->
+<div class="modal-overlay" id="pfp-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Edit profile photo">
+        <h3 class="modal-title">Edit Profile Photo</h3>
+        <div class="field">
+            <label>Upload Image</label>
+            <input id="pfp-file" type="file" accept="image/*">
+        </div>
+        <div class="field">
+            <label>Or paste Image URL</label>
+            <input id="pfp-url" placeholder="https://...">
+        </div>
+        <button class="btn" id="pfp-load-btn" type="button">Load</button>
+        <div class="crop-shell" id="pfp-crop-shell" style="display:none;">
+            <img id="pfp-crop-img" alt="Crop profile image">
+            <div class="help">Drag to position and scroll/pinch to zoom. The circle shows what will fit your profile frame.</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn" id="pfp-cancel" type="button">Cancel</button>
+            <button class="btn btn-primary" id="pfp-save" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="username-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Edit username">
+        <h3 class="modal-title">Edit Username</h3>
+        <div class="field"><label>New Username</label><input id="new-username" maxlength="50"></div>
+        <div class="help">New username must be different and unique.</div>
+        <div class="modal-actions">
+            <button class="btn" id="username-cancel" type="button">Cancel</button>
+            <button class="btn btn-primary" id="username-save" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="email-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Edit email">
+        <h3 class="modal-title">Edit Email</h3>
+        <div class="field"><label>New Email</label><input id="new-email" type="email" placeholder="name@example.com"></div>
+        <div class="field"><label>Current Password (required to update email)</label><input id="email-current-password" type="password" placeholder="Enter current password"></div>
+        <div class="help">After saving, only the new email will be able to log in.</div>
+        <div class="modal-actions">
+            <button class="btn" id="email-cancel" type="button">Cancel</button>
+            <button class="btn btn-primary" id="email-save" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="password-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Change password">
+        <h3 class="modal-title">Change Password</h3>
+        <div class="field"><label>Current Password</label><input id="pw-current" type="password"></div>
+        <div class="field"><label>New Password</label><input id="pw-new" type="password" minlength="6"></div>
+        <div class="field"><label>Verify New Password</label><input id="pw-verify" type="password" minlength="6"></div>
+        <div class="help">New password must match the verification field.</div>
+        <div class="modal-actions">
+            <button class="btn" id="pw-cancel" type="button">Cancel</button>
+            <button class="btn btn-primary" id="pw-save" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+let me = null;
+let meData = null;
+let classrooms = [];
+let pfpCropper=null;
+let pfpLoaded=false;
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeFirebase();
+    bind();
+    waitAuth();
+});
+
+function bind(){
+    document.getElementById('logout-btn').addEventListener('click',()=>auth.signOut().then(()=>location.href='login.html'));
+    document.getElementById('sidebar-edge-toggle').addEventListener('click',toggleSidebar);
+    document.getElementById('header-profile').addEventListener('click',()=>{
+        window.scrollTo({top:0,behavior:'smooth'});
+    });
+    document.getElementById('open-create-class').addEventListener('click',()=>document.getElementById('create-modal').classList.add('active'));
+    document.getElementById('cancel-create').addEventListener('click',()=>document.getElementById('create-modal').classList.remove('active'));
+    document.getElementById('create-btn').addEventListener('click',createClass);
+    document.getElementById('toggle-classrooms').addEventListener('click',()=>{
+        const list=document.getElementById('sidebar-classrooms');
+        const btn=document.getElementById('toggle-classrooms');
+        const collapsed=list.classList.toggle('collapsed');
+        btn.textContent=`${collapsed ? '▸' : '▾'} Your Classrooms`;
+    });
+
+    document.getElementById('edit-photo-btn').addEventListener('click',()=>openModal('pfp-modal'));
+    document.getElementById('edit-username-btn').addEventListener('click',()=>{
+        document.getElementById('new-username').value=(meData?.displayName||me?.displayName||'').trim();
+        openModal('username-modal');
+    });
+    document.getElementById('edit-email-btn').addEventListener('click',()=>{
+        document.getElementById('new-email').value=(me?.email||meData?.email||'').trim();
+        document.getElementById('email-current-password').value='';
+        openModal('email-modal');
+    });
+    document.getElementById('edit-password-btn').addEventListener('click',()=>{
+        document.getElementById('pw-current').value='';
+        document.getElementById('pw-new').value='';
+        document.getElementById('pw-verify').value='';
+        openModal('password-modal');
+    });
+
+    wireModalDismiss('pfp-modal');
+    wireModalDismiss('username-modal');
+    wireModalDismiss('email-modal');
+    wireModalDismiss('password-modal');
+
+    document.getElementById('pfp-cancel').addEventListener('click',()=>closeModal('pfp-modal'));
+    document.getElementById('pfp-load-btn').addEventListener('click',loadPfpFromUrl);
+    document.getElementById('pfp-file').addEventListener('change',loadPfpFromFile);
+    document.getElementById('pfp-save').addEventListener('click',savePfp);
+
+    document.getElementById('username-cancel').addEventListener('click',()=>closeModal('username-modal'));
+    document.getElementById('username-save').addEventListener('click',saveUsername);
+
+    document.getElementById('email-cancel').addEventListener('click',()=>closeModal('email-modal'));
+    document.getElementById('email-save').addEventListener('click',saveEmail);
+
+    document.getElementById('pw-cancel').addEventListener('click',()=>closeModal('password-modal'));
+    document.getElementById('pw-save').addEventListener('click',savePassword);
+}
+
+function waitAuth(){
+    const t=setInterval(()=>{
+        if(auth){clearInterval(t);auth.onAuthStateChanged(handleAuth)}
+    },100)
+}
+
+async function handleAuth(user){
+    if(!user)return location.href='login.html';
+    me=user;
+    meData=await getUserByUid(user.uid);
+    if(!meData)return location.href='login.html';
+    if(meData.role==='admin')return location.href='admin-dashboard.html';
+    if(meData.role!=='teacher')return location.href='student-dashboard.html';
+
+    await ensureFirestoreEmailMatchesAuth();
+
+    syncProfileUI();
+
+    await ensureLegacyClassroomOne();
+    await refreshClassrooms();
+}
+
+async function ensureFirestoreEmailMatchesAuth(){
+    if(!me || !meData) return;
+    const authEmail=(me.email||'').trim();
+    if(!authEmail) return;
+    if((meData.email||'').trim().toLowerCase()===authEmail.toLowerCase()) return;
+    try{
+        await usersCollection.doc(me.uid).update({email:authEmail});
+        meData.email=authEmail;
+        syncProfileUI();
+    }catch(err){
+        console.warn('Could not sync Firestore email with Auth email:', err);
+    }
+}
+
+async function withClassroomStats(classrooms){
+    if(!Array.isArray(classrooms)) return [];
+    return Promise.all(classrooms.map(async c=>{
+        try{
+            const [students, quizzes]=await Promise.all([
+                getClassroomMembers(c.id,'student'),
+                getClassroomQuizzes(c.id)
+            ]);
+            return {...c, studentCount:students.length, quizCount:quizzes.length};
+        }catch(err){
+            console.warn('Could not load classroom stats', err);
+            return {...c, studentCount:0, quizCount:0};
+        }
+    }));
+}
+
+async function createClass(){
+    const name=document.getElementById('class-name').value.trim();
+    const description=document.getElementById('class-desc').value.trim();
+    const subject=document.getElementById('class-subject').value.trim();
+    const profilePicture=document.getElementById('class-pfp').value.trim();
+    if(!name)return alert('Classroom name is required.');
+
+    const res=await createClassroom(me.uid, meData.displayName || me.email, {name, description, subject, profilePicture});
+    document.getElementById('create-modal').classList.remove('active');
+    document.getElementById('class-name').value='';
+    document.getElementById('class-desc').value='';
+    document.getElementById('class-subject').value='';
+    document.getElementById('class-pfp').value='';
+    await refreshClassrooms();
+    if(res?.id) location.href=`classroom.html?id=${res.id}`;
+}
+
+async function refreshClassrooms(){
+    const classroomsRaw=await getTeacherClassrooms(me.uid);
+    classrooms=await withClassroomStats(classroomsRaw);
+    render();
+}
+
+function isArchivedClassroom(classroom){
+    return classroom?.isArchived === true || classroom?.readOnly === true || classroom?.status === 'archived';
+}
+
+function render(){
+    const sidebar=document.getElementById('sidebar-classrooms');
+    const tiles=document.getElementById('classroom-tiles');
+
+    if(classrooms.length===0){
+        sidebar.innerHTML='<div class="muted">No classrooms yet.</div>';
+        tiles.innerHTML='<div class="tile"><h3>No classrooms yet</h3><p class="muted">Create your first classroom to start adding quizzes and students.</p></div>';
+        return;
+    }
+
+    sidebar.innerHTML=classrooms.map(c=>{
+        const archived=isArchivedClassroom(c);
+        if(archived){
+            return `<span class="class-link archived">${escapeHtml(c.name)} (Archived)</span>`;
+        }
+        return `<a class="class-link" href="classroom.html?id=${c.id}">${escapeHtml(c.name)}</a>`;
+    }).join('');
+    tiles.innerHTML=classrooms.map(c=>{
+        const archived=isArchivedClassroom(c);
+        const picClass=c.profilePicture?'':' placeholder';
+        const picHtml=c.profilePicture?`<img src="${escapeHtml(c.profilePicture)}" alt="Classroom image">`:'';
+        const cardAttrs=archived
+            ? `class="classroom-card archived" aria-disabled="true"`
+            : `class="classroom-card" onclick="location.href='classroom.html?id=${c.id}'" role="link" tabindex="0" onkeypress="if(event.key==='Enter'){location.href='classroom.html?id=${c.id}'}"`;
+        return `
+        <article ${cardAttrs}>
+            <div class="classroom-hero">
+                <div class="classroom-image${picClass}">${picHtml}</div>
+                <div class="classroom-info">
+                    <div class="classroom-title">${escapeHtml(c.name||'Classroom')}</div>
+                    <div class="classroom-sub"><span>Subject:</span> ${escapeHtml(c.subject||'Subject Name')}</div>
+                    <div class="classroom-sub"><span>Teacher:</span> ${escapeHtml(c.teacherName||'Teacher')}</div>
+                    ${archived ? '<div class="archive-pill">Archived</div><p class="muted">Archived classrooms are read-only and cannot be opened by teachers or students.</p>' : ''}
+                </div>
+            </div>
+            <div class="classroom-footer">
+                <div class="classroom-stats-row">
+                    <div class="stat-pill">
+                        <div class="stat-number">${c.studentCount ?? 0}</div>
+                        <div class="stat-label">Students</div>
+                    </div>
+                    <div class="stat-pill">
+                        <div class="stat-number">${c.quizCount ?? 0}</div>
+                        <div class="stat-label">Quizzes</div>
+                    </div>
+                </div>
+                <div class="classroom-code-block">
+                    <div>
+                        <div class="code-label">Code</div>
+                        <div class="code-value">${escapeHtml(c.code||'------')}</div>
+                    </div>
+                    <button class="copy-btn" aria-label="Copy classroom code" onclick="copyClassCode(event,'${c.code}', this)">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1Zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2Zm0 16H8V7h11v14Z"/></svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+            </div>
+        </article>
+        `;
+    }).join('');
+}
+
+function copyClassCode(event, code, btn){
+    event.stopPropagation();
+    event.preventDefault();
+    if(!code){
+        alert('No classroom code available.');
+        return;
+    }
+    navigator.clipboard?.writeText(code).then(()=>{
+        if(btn){
+            btn.classList.add('copied');
+            btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17Z"/></svg><span>Copied</span>';
+        }
+        alert('Copied');
+    }).catch(err=>{
+        console.warn('Clipboard copy failed', err);
+        alert('Unable to copy code. Please copy it manually.');
+    });
+}
+
+function formatDate(ts){
+    if(!ts?.toDate)return 'N/A';
+    return ts.toDate().toLocaleString();
+}
+
+function escapeHtml(t){
+    const d=document.createElement('div');
+    d.textContent=t||'';
+    return d.innerHTML;
+}
+
+function toggleSidebar(){
+    const collapsed=document.body.classList.toggle('sidebar-collapsed');
+    const btn=document.getElementById('sidebar-edge-toggle');
+    if(btn) btn.textContent=collapsed?'▶':'◀';
+}
+
+function syncProfileUI(){
+    const displayName=(meData?.displayName||me?.displayName||'Teacher').trim()||'Teacher';
+    const role=(meData?.role||'teacher').toLowerCase();
+    const email=(me?.email||meData?.email||'').trim();
+    const pic=meData?.profilePicture||meData?.photoURL||me?.photoURL||'userprofiledefault.png';
+    document.getElementById('profile-username').textContent=displayName;
+    document.getElementById('profile-role').textContent=role;
+    document.getElementById('profile-email').textContent=email;
+    document.getElementById('profile-pic').src=pic;
+
+    const headerName=document.getElementById('header-name');
+    const headerPic=document.getElementById('header-pic');
+    if(headerName) headerName.textContent=displayName;
+    if(headerPic && pic) headerPic.src=pic;
+}
+
+function wireModalDismiss(id){
+    const overlay=document.getElementById(id);
+    if(!overlay) return;
+    overlay.addEventListener('click',(e)=>{ if(e.target===overlay) closeModal(id); });
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && overlay.classList.contains('active')) closeModal(id); });
+}
+
+function openModal(id){
+    const overlay=document.getElementById(id);
+    if(!overlay) return;
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden','false');
+    if(id==='pfp-modal') preparePfpModal();
+}
+
+function closeModal(id){
+    const overlay=document.getElementById(id);
+    if(!overlay) return;
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+    if(id==='pfp-modal') teardownPfpCropper();
+}
+
+function preparePfpModal(){
+    pfpLoaded=false;
+    document.getElementById('pfp-url').value='';
+    document.getElementById('pfp-file').value='';
+    document.getElementById('pfp-crop-shell').style.display='none';
+}
+
+function teardownPfpCropper(){
+    if(pfpCropper){
+        try{ pfpCropper.destroy(); }catch(_e){}
+        pfpCropper=null;
+    }
+}
+
+async function loadPfpFromFile(e){
+    const file=e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>loadImageIntoCropper(reader.result);
+    reader.readAsDataURL(file);
+}
+
+async function loadPfpFromUrl(){
+    const url=document.getElementById('pfp-url').value.trim();
+    if(!url) return alert('Please paste an image URL.');
+    loadImageIntoCropper(url);
+}
+
+function loadImageIntoCropper(src){
+    const img=document.getElementById('pfp-crop-img');
+    const shell=document.getElementById('pfp-crop-shell');
+    shell.style.display='block';
+    img.src=src;
+    img.onload=()=>{
+        teardownPfpCropper();
+        pfpCropper=new Cropper(img,{
+            aspectRatio:1,
+            viewMode:1,
+            dragMode:'move',
+            autoCropArea:1,
+            background:false,
+            guides:false,
+            center:true,
+            highlight:false,
+            cropBoxMovable:false,
+            cropBoxResizable:false,
+            toggleDragModeOnDblclick:false
+        });
+        pfpLoaded=true;
+    };
+    img.onerror=()=>{
+        shell.style.display='none';
+        pfpLoaded=false;
+        alert('Unable to load that image. Try another URL or upload a file.');
+    };
+}
+
+async function savePfp(){
+    if(!me) return;
+    if(!pfpCropper || !pfpLoaded) return alert('Please load an image first.');
+    try{
+        const canvas=pfpCropper.getCroppedCanvas({width:400,height:400,imageSmoothingQuality:'high'});
+        const dataUrl=canvas.toDataURL('image/png');
+        await saveProfilePicture(me.uid, dataUrl);
+        meData.profilePicture=dataUrl;
+        syncProfileUI();
+        closeModal('pfp-modal');
+    }catch(e){
+        console.error(e);
+        alert('Could not save profile picture.');
+    }
+}
+
+async function saveUsername(){
+    if(!me || !meData) return;
+    const newName=(document.getElementById('new-username').value||'').trim();
+    const oldName=(meData.displayName||me.displayName||'').trim();
+    if(!newName) return alert('Please enter a username.');
+    if(newName.toLowerCase()===oldName.toLowerCase()) return alert('New username cannot be the same as the old username.');
+    const snap=await usersCollection.where('displayName','==',newName).get();
+    const takenByOther=snap.docs.some(d=>d.id!==me.uid);
+    if(takenByOther) return alert('That username is already taken.');
+    try{
+        await usersCollection.doc(me.uid).update({displayName:newName});
+        await me.updateProfile({displayName:newName});
+        meData.displayName=newName;
+        await updateMembershipDisplayName(newName);
+        syncProfileUI();
+        closeModal('username-modal');
+    }catch(e){
+        console.error(e);
+        alert('Could not update username.');
+    }
+}
+
+async function updateMembershipDisplayName(newName){
+    try{
+        const qs=await classroomMembersCollection.where('uid','==',me.uid).get();
+        const batch=db.batch();
+        qs.forEach(doc=>batch.update(doc.ref,{displayName:newName}));
+        if(!qs.empty) await batch.commit();
+    }catch(e){
+        console.warn('Could not update classroom member names:',e);
+    }
+}
+
+function isValidEmail(email){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function getProviderIds(user){
+    return (user?.providerData||[]).map(p=>p?.providerId).filter(Boolean);
+}
+
+async function reauthForSensitiveChange(user, currentPassword){
+    const providers=getProviderIds(user);
+
+    if(providers.includes('password') && currentPassword){
+        const cred=firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+        if(typeof user.reauthenticateWithCredential==='function') return user.reauthenticateWithCredential(cred);
+        return firebase.auth().currentUser.reauthenticateWithCredential(cred);
+    }
+
+    if(providers.includes('google.com')){
+        const provider=new firebase.auth.GoogleAuthProvider();
+        if(typeof user.reauthenticateWithPopup==='function') return user.reauthenticateWithPopup(provider);
+        return firebase.auth().currentUser.reauthenticateWithPopup(provider);
+    }
+
+    if(providers.includes('password') && !currentPassword){
+        throw { code: 'auth/missing-password', message: 'Current password required.' };
+    }
+
+    throw { code: 'auth/unsupported-provider', message: `Unsupported provider: ${providers.join(', ')||'unknown'}` };
+}
+
+async function saveEmail(){
+    const user=auth?.currentUser;
+    if(!user || !meData) return;
+    const newEmail=(document.getElementById('new-email').value||'').trim();
+    const currentPassword=document.getElementById('email-current-password').value;
+    const oldEmail=(user.email||meData.email||'').trim();
+    if(!newEmail) return alert('Please enter an email.');
+    if(newEmail.toLowerCase()===oldEmail.toLowerCase()) return alert('New email cannot be the same as the old email.');
+    if(!isValidEmail(newEmail)) return alert('Please enter a valid email format.');
+    if(getProviderIds(user).includes('password') && !currentPassword) return alert('Current password is required to update email.');
+    try{
+        await reauthForSensitiveChange(user, currentPassword);
+        await user.updateEmail(newEmail);
+        await usersCollection.doc(user.uid).update({email:newEmail});
+        await user.reload();
+        me = auth.currentUser;
+        meData.email=newEmail;
+        syncProfileUI();
+        closeModal('email-modal');
+        alert('Email updated. Use the new email next time you log in.');
+    }catch(e){
+        console.error(e);
+        let msg='Could not update email.';
+        if(e?.code==='auth/invalid-email') msg='Invalid email address.';
+        if(e?.code==='auth/email-already-in-use') msg='That email is already in use.';
+        if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') msg='Current password is incorrect.';
+        if(e?.code==='auth/requires-recent-login') msg='Please log in again and retry changing email.';
+        if(e?.code==='auth/operation-not-allowed'){
+            try{
+                await user.verifyBeforeUpdateEmail(newEmail,{url:location.origin+'/login.html',handleCodeInApp:false});
+                closeModal('email-modal');
+                return alert('We sent a verification link to the new email. Open it to confirm, then sign in with the new email. The change will take effect after verification.');
+            }catch(vErr){
+                console.error('verifyBeforeUpdateEmail failed', vErr);
+                msg='Could not update email. Verification link failed to send.';
+            }
+        }
+        if(e?.code==='auth/popup-blocked') msg='Popup blocked. Allow popups and retry.';
+        if(e?.code==='auth/popup-closed-by-user') msg='Popup closed. Retry to confirm your identity.';
+        if(e?.code==='auth/unsupported-provider') msg='This sign-in method cannot change email here.';
+        if(e?.code==='auth/missing-password') msg='Current password is required.';
+        if(msg==='Could not update email.' && (e?.code || e?.message)) msg=`Could not update email. ${e.code ? e.code + ': ' : ''}${e.message || ''}`.trim();
+        alert(msg);
+    }
+}
+
+async function savePassword(){
+    const user=auth?.currentUser;
+    if(!user) return;
+    const current=document.getElementById('pw-current').value;
+    const next=document.getElementById('pw-new').value;
+    const verify=document.getElementById('pw-verify').value;
+    if(!current || !next || !verify) return alert('Please fill in all password fields.');
+    if(next!==verify) return alert('New password and verify password do not match.');
+    if(next.length<6) return alert('New password must be at least 6 characters.');
+    try{
+        if(getProviderIds(user).includes('password') && !current) return alert('Current password is required.');
+        await reauthForSensitiveChange(user, current);
+        await user.updatePassword(next);
+        closeModal('password-modal');
+        alert('Password updated successfully.');
+    }catch(e){
+        console.error(e);
+        let msg='Could not update password.';
+        if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') msg='Current password is incorrect.';
+        if(e?.code==='auth/weak-password') msg='New password is too weak.';
+        if(e?.code==='auth/requires-recent-login') msg='Please log in again and retry changing password.';
+        if(e?.code==='auth/popup-blocked') msg='Popup blocked. Allow popups and retry.';
+        if(e?.code==='auth/popup-closed-by-user') msg='Popup closed. Retry to confirm your identity.';
+        if(e?.code==='auth/unsupported-provider') msg='This sign-in method cannot change password here.';
+        if(msg==='Could not update password.' && (e?.code || e?.message)) msg=`Could not update password. ${e.code ? e.code + ': ' : ''}${e.message || ''}`.trim();
+        alert(msg);
+    }
+}
+</script>
+</body>
+</html>

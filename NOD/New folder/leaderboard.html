@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOD - Global Leaderboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="Untitled 1.png" type="image">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(354deg, #9eff00 10%, #ffe600 50%, #a200ba 90%);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(337deg, #ff3a00, #000000);
+            border: none;
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            font-family: 'Cinzel', serif;
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(131deg, #ffffff, #16f664);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.815);
+            margin-bottom: 40px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .tab-btn.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #c8ff00;
+            color: #fff;
+        }
+
+        /* Leaderboard Table */
+        .leaderboard-container {
+            background: rgb(203 181 255 / 36%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 60px 1fr 100px 100px 100px 100px;
+            padding: 16px 24px;
+            background: rgb(39 0 255 / 22%);
+            font-weight: 600;
+            color: rgb(255 255 255 / 60%);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 100px 100px 100px 125px;
+            padding: 16px 24px;
+            border-bottom: 6px solid #7a7a7a24;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .leaderboard-row:last-child {
+            border-bottom: none;
+        }
+
+        .rank {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .rank-1 { color: #990000; font-size: 50px; text-shadow: 0 0 5px rgba(0, 0, 0, 0.286);}
+        .rank-2 { color: #ffffff; font-size: 20px; text-shadow: 0 0 5px rgba(0, 0, 0, 0.286);}
+        .rank-3 { color: #ffff00; font-size: 20px; text-shadow: 0 0 5px rgba(0, 0, 0, 0.286);}
+
+        .rank-badge {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 16px;
+        }
+
+        .rank-badge.gold { background: linear-gradient(135deg, #eeff00, #f59e0b); }
+        .rank-badge.silver { background: linear-gradient(135deg, #94a3b8, #64748b); }
+        .rank-badge.bronze { background: linear-gradient(135deg, #cd7f32, #a0522d); }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .player-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .player-role {
+            font-size: 13px;
+            color: rgb(103 103 103);
+        }
+
+        .stat {
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .stat.score {
+            color: #c50000;
+            font-size: 18px;
+            
+            
+        }
+
+        .stat.wins {
+            color: #a70093;
+            font-size: 18px;
+        }
+
+        .stat.losses {
+            color: #008dc5;
+            font-size: 18px;
+        }
+
+        .stat.games {
+            color: #000293;
+            font-size: 18px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Confetti GIF Overlay */
+        .confetti-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .confetti-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .confetti-overlay.fade-out {
+            animation: confettiFade 0.6s ease-out forwards;
+        }
+
+        @keyframes confettiFade {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .empty-desc {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .leaderboard-header,
+            .leaderboard-row {
+                grid-template-columns: 40px 1fr 70px 70px;
+                padding: 12px 16px;
+            }
+
+            .leaderboard-header .col-losses,
+            .leaderboard-header .col-games,
+            .leaderboard-row .stat.losses,
+            .leaderboard-row .stat.games {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            .logo img {
+                height: 38px;
+            }
+
+            .nav-links {
+                gap: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-btn {
+                padding: 8px 14px;
+                font-size: 0.85rem;
+            }
+
+            .main-content {
+                padding: 25px 15px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .page-subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 25px;
+            }
+
+            .tabs {
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                padding: 10px 14px;
+                font-size: 0.8rem;
+            }
+
+            .leaderboard-header,
+            .leaderboard-row {
+                grid-template-columns: 35px 1fr 55px 55px;
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+
+            .leaderboard-header {
+                font-size: 0.65rem;
+            }
+
+            .rank {
+                width: 26px;
+                height: 26px;
+                font-size: 0.75rem;
+            }
+
+            .rank.gold,
+            .rank.silver,
+            .rank.bronze {
+                width: 26px;
+                height: 26px;
+            }
+
+            .player-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.7rem;
+            }
+
+            .player-name {
+                font-size: 0.85rem;
+            }
+
+            .player-role {
+                font-size: 0.65rem;
+            }
+
+            .stat {
+                font-size: 0.85rem;
+            }
+
+            .loading p,
+            .empty-state h3 {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .header {
+                padding: 10px 12px;
+            }
+
+            .logo img {
+                height: 32px;
+            }
+
+            .nav-links {
+                gap: 8px;
+            }
+
+            .nav-btn {
+                padding: 7px 12px;
+                font-size: 0.8rem;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .page-subtitle {
+                font-size: 2rem;
+            }
+
+            .tab-btn {
+                padding: 8px 10px;
+                font-size: 0.7rem;
+            }
+
+            .leaderboard-header,
+            .leaderboard-row {
+                grid-template-columns: 30px 1fr 50px 50px;
+                padding: 8px 10px;
+            }
+
+            .leaderboard-header {
+                font-size: 0.55rem;
+            }
+
+            .rank,
+            .rank.gold,
+            .rank.silver,
+            .rank.bronze {
+                width: 22px;
+                height: 22px;
+                font-size: 0.65rem;
+            }
+
+            .player-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 0.6rem;
+            }
+
+            .player-name {
+                font-size: 0.75rem;
+            }
+
+            .player-role {
+                font-size: 0.55rem;
+            }
+
+            .stat {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Confetti overlay - plays once then disappears -->
+    <div class="confetti-overlay" id="confetti-overlay">
+        <img id="confetti-gif" alt="">
+    </div>
+
+    <header class="header">
+        <div class="logo"><img src="Untitled 1.png" alt="NOD Logo"></div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn primary">⚔️ Play Game</a>
+            <a href="login.html" class="nav-btn" id="auth-btn">Login</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">🏆 LEADERBOARD</h1>
+        <p class="page-subtitle">Top players ranked by total score</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-sort="totalScore">Total Score</button>
+            <button class="tab-btn" data-sort="wins">Most Wins</button>
+            <button class="tab-btn" data-sort="gamesPlayed">Most Games</button>
+        </div>
+
+        <div class="leaderboard-container">
+            <div class="leaderboard-header">
+                <div class="col-rank">Rank</div>
+                <div class="col-player">Player</div>
+                <div class="col-score">Score</div>
+                <div class="col-wins">Wins</div>
+                <div class="col-losses">Losses</div>
+                <div class="col-games">Games</div>
+            </div>
+            <div id="leaderboard-body">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading leaderboard...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwvrwRoPNXptku6oSjqX8qV-38mWqBCqA",
+            authDomain: "capstone-project-nod-16ff9.firebaseapp.com",
+            projectId: "capstone-project-nod-16ff9",
+            storageBucket: "capstone-project-nod-16ff9.firebasestorage.app",
+            messagingSenderId: "244508008998",
+            appId: "1:244508008998:web:56abc30f10c23f5005bce7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let currentSort = 'totalScore';
+        let allUsers = [];
+
+        // Get initials from name
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        // Load leaderboard
+        async function loadLeaderboard(sortField = 'totalScore') {
+            const body = document.getElementById('leaderboard-body');
+            body.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading leaderboard...</p></div>';
+
+            try {
+                const snapshot = await db.collection('users')
+                    .orderBy(sortField, 'desc')
+                    .limit(50)
+                    .get();
+
+                allUsers = [];
+                snapshot.forEach(doc => {
+                    allUsers.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderLeaderboard(allUsers);
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                body.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">😕</div>
+                        <div class="empty-title">Could not load leaderboard</div>
+                        <div class="empty-desc">${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Render leaderboard
+        function renderLeaderboard(users) {
+            const body = document.getElementById('leaderboard-body');
+
+            if (users.length === 0) {
+                body.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🎮</div>
+                        <div class="empty-title">No players yet!</div>
+                        <div class="empty-desc">Be the first to play and claim the top spot.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            body.innerHTML = users.map((user, index) => {
+                const rank = index + 1;
+                let rankClass = '';
+                let rankBadgeClass = '';
+                
+                if (rank === 1) { rankClass = 'rank-1'; rankBadgeClass = 'gold'; }
+                else if (rank === 2) { rankClass = 'rank-2'; rankBadgeClass = 'silver'; }
+                else if (rank === 3) { rankClass = 'rank-3'; rankBadgeClass = 'bronze'; }
+
+                return `
+                    <div class="leaderboard-row">
+                        <div class="rank ${rankClass}">
+                            ${rank <= 3 ? `<div class="rank-badge ${rankBadgeClass}">${rank}</div>` : rank}
+                        </div>
+                        <div class="player-info">
+                            <div class="player-avatar">${getInitials(user.displayName)}</div>
+                            <div>
+                                <div class="player-name">${user.displayName || 'Unknown'}</div>
+                                <div class="player-role">${user.role || 'student'}</div>
+                            </div>
+                        </div>
+                        <div class="stat score">${user.totalScore || 0}</div>
+                        <div class="stat wins">${user.wins || 0}</div>
+                        <div class="stat losses">${user.losses || 0}</div>
+                        <div class="stat games">${user.gamesPlayed || 0}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSort = btn.dataset.sort;
+                loadLeaderboard(currentSort);
+            });
+        });
+
+        // Auth state
+        auth.onAuthStateChanged(user => {
+            const authBtn = document.getElementById('auth-btn');
+            if (user) {
+                authBtn.textContent = 'Logout';
+                authBtn.href = '#';
+                authBtn.onclick = () => {
+                    auth.signOut().then(() => {
+                        window.location.href = 'login.html';
+                    });
+                };
+            } else {
+                authBtn.textContent = 'Login';
+                authBtn.href = 'login.html';
+                authBtn.onclick = null;
+            }
+        });
+
+        // Initial load
+        loadLeaderboard(currentSort);
+
+        // --- Confetti GIF: play once then remove ---
+        (function() {
+            const overlay = document.getElementById('confetti-overlay');
+            const gif = document.getElementById('confetti-gif');
+            // Append a cache-busting query so the browser always starts the GIF from frame 1
+            gif.src = 'party-gif.gif?' + Date.now();
+
+            // Remove after 4 seconds (adjust if your GIF is longer/shorter)
+            setTimeout(function() {
+                overlay.classList.add('fade-out');
+                // Remove from DOM after the fade animation finishes
+                overlay.addEventListener('animationend', function() {
+                    overlay.remove();
+                });
+            }, 4000);
+        })();
+    </script>
+</body>
+</html>
